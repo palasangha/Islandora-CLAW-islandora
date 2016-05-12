@@ -1,0 +1,30 @@
+sudo: true
+language: php
+php:
+  - 5.5
+  - 5.6
+  - 7.0
+  - hhvm
+
+matrix:
+    allow_failures:
+        - php: hhvm
+
+branches:
+  only:
+    - 7.x-2.x
+
+before_install:
+  - export ISLANDORA_DIR=$TRAVIS_BUILD_DIR
+  - $TRAVIS_BUILD_DIR/islandora/tests/scripts/travis_setup.sh
+  - cd $HOME/drupal-*
+
+script:
+  - ant -buildfile sites/all/modules/islandora/islandora/build.xml lint
+  - $ISLANDORA_DIR/islandora/tests/scripts/line_endings.sh sites/all/modules/islandora/islandora sites/all/modules/islandora/islandora_apachesolr sites/all/modules/islandora/islandora_basic_image sites/all/modules/islandora/islandora_collection sites/all/modules/islandora/islandora_dc sites/all/modules/islandora/islandora_mods sites/all/modules/islandora/islandora_rdf_mapping_service
+  - drush coder-review --reviews=production,security,style,i18n,potx,sniffer islandora islandora_apachesolr islandora_basic_image islandora_collection islandora_dc islandora_mods islandora_rdf_mapping_service
+  - phpcpd --names *.module,*.inc,*.test sites/all/modules/islandora/islandora sites/all/modules/islandora/islandora_apachesolr sites/all/modules/islandora/islandora_basic_image sites/all/modules/islandora/islandora_collection sites/all/modules/islandora/islandora_dc sites/all/modules/islandora/islandora_mods sites/all/modules/islandora/islandora_rdf_mapping_service
+  - drush test-run --uri=http://localhost:8081 Islandora
+
+notifications:
+  irc: "irc.freenode.org#islandora"
