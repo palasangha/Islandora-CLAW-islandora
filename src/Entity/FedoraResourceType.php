@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\islandoraclaw\Entity;
+namespace Drupal\islandora\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
-use Drupal\islandoraclaw\FedoraResourceTypeInterface;
+use Drupal\islandora\FedoraResourceTypeInterface;
 
 /**
  * Defines the Fedora resource type entity.
@@ -12,14 +12,14 @@ use Drupal\islandoraclaw\FedoraResourceTypeInterface;
  *   id = "fedora_resource_type",
  *   label = @Translation("Fedora resource type"),
  *   handlers = {
- *     "list_builder" = "Drupal\islandoraclaw\FedoraResourceTypeListBuilder",
+ *     "list_builder" = "Drupal\islandora\FedoraResourceTypeListBuilder",
  *     "form" = {
- *       "add" = "Drupal\islandoraclaw\Form\FedoraResourceTypeForm",
- *       "edit" = "Drupal\islandoraclaw\Form\FedoraResourceTypeForm",
- *       "delete" = "Drupal\islandoraclaw\Form\FedoraResourceTypeDeleteForm"
+ *       "add" = "Drupal\islandora\Form\FedoraResourceTypeForm",
+ *       "edit" = "Drupal\islandora\Form\FedoraResourceTypeForm",
+ *       "delete" = "Drupal\islandora\Form\FedoraResourceTypeDeleteForm"
  *     },
  *     "route_provider" = {
- *       "html" = "Drupal\islandoraclaw\FedoraResourceTypeHtmlRouteProvider",
+ *       "html" = "Drupal\islandora\FedoraResourceTypeHtmlRouteProvider",
  *     },
  *   },
  *   config_prefix = "fedora_resource_type",
@@ -55,4 +55,18 @@ class FedoraResourceType extends ConfigEntityBundleBase implements FedoraResourc
    */
   protected $label;
 
+  /**
+   * The RDF type
+   * 
+   * @var string
+   */
+  protected $rdf_type;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getRdfType()
+  {
+    return $this->rdf_type;
+  }
 }

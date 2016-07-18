@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw\Form;
+namespace Drupal\islandora\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;

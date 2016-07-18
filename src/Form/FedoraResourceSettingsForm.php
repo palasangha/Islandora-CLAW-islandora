@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw\Form;
+namespace Drupal\islandora\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -8,9 +8,9 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Class FedoraResourceSettingsForm.
  *
- * @package Drupal\islandoraclaw\Form
+ * @package Drupal\islandora\Form
  *
- * @ingroup islandoraclaw
+ * @ingroup islandora
  */
 class FedoraResourceSettingsForm extends FormBase {
 

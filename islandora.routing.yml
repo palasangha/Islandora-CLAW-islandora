@@ -1,0 +1,19 @@
+entity.fedora_resource.collection:
+  path: '/admin/structure/fedora_resource'
+  defaults:
+    _entity_list: 'fedora_resource'
+    _title: 'Fedora Resource'
+  requirements:
+    _permission: 'administer fedora resource entities'
+  options:
+    _admin_route: true
+
+entity.fedora_resource_type.collection:
+  path: '/admin/structure/fedora_resource_type'
+  defaults:
+    _entity_list: 'fedora_resource_type'
+    _title: 'Fedora Resource Type'
+  requirements:
+    _permission: 'administer fedora resource type entities'
+  options:
+    _admin_route: true

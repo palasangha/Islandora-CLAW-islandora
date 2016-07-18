@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw\Form;
+namespace Drupal\islandora\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Form controller for Fedora resource edit forms.
  *
- * @ingroup islandoraclaw
+ * @ingroup islandora
  */
 class FedoraResourceForm extends ContentEntityForm {
 
@@ -16,7 +16,7 @@ class FedoraResourceForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\islandoraclaw\Entity\FedoraResource */
+    /* @var $entity \Drupal\islandora\Entity\FedoraResource */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
 

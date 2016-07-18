@@ -1,0 +1,4 @@
+langcode: en
+id: rdf_source
+label: 'RDF Source'
+rdf_type: fedora:Resource

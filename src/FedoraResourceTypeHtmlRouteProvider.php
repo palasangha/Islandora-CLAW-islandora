@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw;
+namespace Drupal\islandora;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;

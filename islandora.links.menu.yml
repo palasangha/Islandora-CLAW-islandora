@@ -8,7 +8,7 @@ entity.fedora_resource.collection:
 
 # Fedora resource type menu items definition
 entity.fedora_resource_type.collection:
-  title: 'Fedora resource type'
+  title: 'Fedora resource type list'
   route_name: entity.fedora_resource_type.collection
   description: 'List Fedora resource type (bundles)'
   parent: system.admin_structure

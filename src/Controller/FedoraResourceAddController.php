@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw\Controller;
+namespace Drupal\islandora\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Class FedoraResourceAddController.
  *
- * @package Drupal\islandoraclaw\Controller
+ * @package Drupal\islandora\Controller
  */
 class FedoraResourceAddController extends ControllerBase {
 

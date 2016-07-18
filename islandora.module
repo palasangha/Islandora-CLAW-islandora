@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains islandoraclaw.module..
+ * Contains islandora.module..
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -10,10 +10,10 @@ use Drupal\Core\Routing\RouteMatchInterface;
 /**
  * Implements hook_help().
  */
-function islandoraclaw_help($route_name, RouteMatchInterface $route_match) {
+function islandora_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
-    // Main module help for the islandoraclaw module.
-    case 'help.page.islandoraclaw':
+    // Main module help for the islandora module.
+    case 'help.page.islandora':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('') . '</p>';
@@ -26,7 +26,7 @@ function islandoraclaw_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_theme().
  */
-function islandoraclaw_theme() {
+function islandora_theme() {
   $theme = [];
   $theme['fedora_resource'] = [
     'render element' => 'elements',
@@ -44,7 +44,7 @@ function islandoraclaw_theme() {
 /**
 * Implements hook_theme_suggestions_HOOK().
 */
-function islandoraclaw_theme_suggestions_fedora_resource(array $variables) {
+function islandora_theme_suggestions_fedora_resource(array $variables) {
   $suggestions = array();
   $entity = $variables['elements']['#fedora_resource'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');

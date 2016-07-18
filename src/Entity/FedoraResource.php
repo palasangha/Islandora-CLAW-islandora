@@ -1,19 +1,19 @@
 <?php
 
-namespace Drupal\islandoraclaw\Entity;
+namespace Drupal\islandora\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\islandoraclaw\FedoraResourceInterface;
+use Drupal\islandora\FedoraResourceInterface;
 use Drupal\user\UserInterface;
 
 /**
  * Defines the Fedora resource entity.
  *
- * @ingroup islandoraclaw
+ * @ingroup islandora
  *
  * @ContentEntityType(
  *   id = "fedora_resource",
@@ -21,18 +21,18 @@ use Drupal\user\UserInterface;
  *   bundle_label = @Translation("Fedora resource type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\islandoraclaw\FedoraResourceListBuilder",
- *     "views_data" = "Drupal\islandoraclaw\Entity\FedoraResourceViewsData",
+ *     "list_builder" = "Drupal\islandora\FedoraResourceListBuilder",
+ *     "views_data" = "Drupal\islandora\Entity\FedoraResourceViewsData",
  *
  *     "form" = {
- *       "default" = "Drupal\islandoraclaw\Form\FedoraResourceForm",
- *       "add" = "Drupal\islandoraclaw\Form\FedoraResourceForm",
- *       "edit" = "Drupal\islandoraclaw\Form\FedoraResourceForm",
- *       "delete" = "Drupal\islandoraclaw\Form\FedoraResourceDeleteForm",
+ *       "default" = "Drupal\islandora\Form\FedoraResourceForm",
+ *       "add" = "Drupal\islandora\Form\FedoraResourceForm",
+ *       "edit" = "Drupal\islandora\Form\FedoraResourceForm",
+ *       "delete" = "Drupal\islandora\Form\FedoraResourceDeleteForm",
  *     },
- *     "access" = "Drupal\islandoraclaw\FedoraResourceAccessControlHandler",
+ *     "access" = "Drupal\islandora\FedoraResourceAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\islandoraclaw\FedoraResourceHtmlRouteProvider",
+ *       "html" = "Drupal\islandora\FedoraResourceHtmlRouteProvider",
  *     },
  *   },
  *   base_table = "fedora_resource",
@@ -176,6 +176,40 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
     return $this;
   }
 
+
+  /**
+   * {@inheritdoc}
+   */
+  public function hasParent()
+  {
+    return ($this->get('fedora_has_parent') !== null);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getParent()
+  {
+    return $this->get('fedora_has_parent')->getEntity();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getParentId()
+  {
+    return $this->get('fedora_has_parent')->getEntity()->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setParent(EntityTypeInterface $entity)
+  {
+    $this->set('fedora_has_parent', $entity);
+    return $this;
+  }
+
   /**
    * Default value callback for 'fedora_has_parent' base field definition.
    *
@@ -238,7 +272,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
         ->setRevisionable(TRUE)
         ->setSetting('target_type', 'fedora_resource')
         ->setSetting('handler', 'default')
-        ->setDefaultValueCallback('Drupal\islandoraClaw\Entity\FedoraResource::getFedoraRoot')
+        ->setDefaultValueCallback('Drupal\islandora\Entity\FedoraResource::getFedoraRoot')
         ->setTranslatable(TRUE)
         ->setDisplayOptions('view', array(
           'label' => 'hidden',
@@ -258,7 +292,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
         ->setDisplayConfigurable('form', TRUE)
         ->setDisplayConfigurable('view', TRUE);
 
-        $fields['ldp_containes'] = BaseFieldDefinition::create('entity_reference')
+        $fields['ldp_contains'] = BaseFieldDefinition::create('entity_reference')
           ->setLabel(t('LDP Contains'))
           ->setDescription(t('Contains Fedora Resource.'))
           ->setRevisionable(TRUE)

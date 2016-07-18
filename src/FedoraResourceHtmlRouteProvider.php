@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw;
+namespace Drupal\islandora;
 
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
@@ -86,8 +86,8 @@ class FedoraResourceHtmlRouteProvider extends AdminHtmlRouteProvider {
       // Content entities with bundles are added via a dedicated controller.
       $route
         ->setDefaults([
-          '_controller' => 'Drupal\islandoraclaw\Controller\FedoraResourceAddController::addForm',
-          '_title_callback' => 'Drupal\islandoraclaw\Controller\FedoraResourceAddController::getAddFormTitle',
+          '_controller' => 'Drupal\islandora\Controller\FedoraResourceAddController::addForm',
+          '_title_callback' => 'Drupal\islandora\Controller\FedoraResourceAddController::getAddFormTitle',
         ])
         ->setRequirement('_entity_create_access', $entity_type_id . ':{' . $bundle_entity_type_id . '}');
       $parameters[$bundle_entity_type_id] = ['type' => 'entity:' . $bundle_entity_type_id];
@@ -113,7 +113,7 @@ class FedoraResourceHtmlRouteProvider extends AdminHtmlRouteProvider {
     $route = new Route("/admin/structure/{$entity_type->id()}/add");
     $route
       ->setDefaults([
-        '_controller' => 'Drupal\islandoraclaw\Controller\FedoraResourceAddController::add',
+        '_controller' => 'Drupal\islandora\Controller\FedoraResourceAddController::add',
         '_title' => "Add {$entity_type->getLabel()}",
       ])
       ->setRequirement('_entity_create_access', $entity_type->id())
@@ -136,7 +136,7 @@ class FedoraResourceHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route = new Route("/admin/structure/{$entity_type->id()}/settings");
       $route
         ->setDefaults([
-          '_form' => 'Drupal\islandoraclaw\Form\FedoraResourceSettingsForm',
+          '_form' => 'Drupal\islandora\Form\FedoraResourceSettingsForm',
           '_title' => "{$entity_type->getLabel()} settings",
         ])
         ->setRequirement('_permission', $entity_type->getAdminPermission())

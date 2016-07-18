@@ -1,3 +1,4 @@
+# Fedora Resource permissions
 add fedora resource entities:
   title: 'Create new Fedora resource entities'
 
@@ -17,3 +18,9 @@ view published fedora resource entities:
 
 view unpublished fedora resource entities:
   title: 'View unpublished Fedora resource entities'
+
+# Fedora Resource Type permissions
+administer fedora resource type entities:
+  title: 'Administer Fedora Resource Type entities'
+  description: 'Allow to access administration of Fedora Resource Type entities (bundles).'
+  restrict access: true

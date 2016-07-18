@@ -1,20 +1,17 @@
 <?php
 
-namespace Drupal\islandoraclaw;
+namespace Drupal\islandora;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Routing\LinkGeneratorTrait;
-use Drupal\Core\Url;
+use Drupal\Core\Link;
 
 /**
  * Defines a class to build a listing of Fedora resource entities.
  *
- * @ingroup islandoraclaw
+ * @ingroup islandora
  */
 class FedoraResourceListBuilder extends EntityListBuilder {
-
-  use LinkGeneratorTrait;
 
   /**
    * {@inheritdoc}
@@ -22,6 +19,7 @@ class FedoraResourceListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('Fedora resource ID');
     $header['name'] = $this->t('Name');
+    $header['parent'] = $this->t('Parent');
     return $header + parent::buildHeader();
   }
 
@@ -29,16 +27,21 @@ class FedoraResourceListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\islandoraclaw\Entity\FedoraResource */
+    /* @var $entity \Drupal\islandora\Entity\FedoraResource */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
+    $row['name'] = Link::fromTextAndUrl(
       $entity->label(),
-      new Url(
-        'entity.fedora_resource.edit_form', array(
-          'fedora_resource' => $entity->id(),
-        )
-      )
+      $entity->toUrl()
     );
+    if ($entity->hasParent()) {
+      $row['parent'] = Link::fromTextAndUrl(
+        $entity->getParent()->label(),
+        $entity->getParent()->toUrl()
+      );
+    }
+    else {
+      $row['parent'] = $this->t("n/a");
+    }
     return $row + parent::buildRow($entity);
   }
 

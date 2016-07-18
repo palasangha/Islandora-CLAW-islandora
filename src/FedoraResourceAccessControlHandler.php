@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw;
+namespace Drupal\islandora;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
@@ -10,7 +10,7 @@ use Drupal\Core\Access\AccessResult;
 /**
  * Access controller for the Fedora resource entity.
  *
- * @see \Drupal\islandoraclaw\Entity\FedoraResource.
+ * @see \Drupal\islandora\Entity\FedoraResource.
  */
 class FedoraResourceAccessControlHandler extends EntityAccessControlHandler {
 
@@ -18,7 +18,7 @@ class FedoraResourceAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\islandoraclaw\FedoraResourceInterface $entity */
+    /** @var \Drupal\islandora\FedoraResourceInterface $entity */
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw;
+namespace Drupal\islandora;
 
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
@@ -16,6 +16,7 @@ class FedoraResourceTypeListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $header['label'] = $this->t('Fedora resource type');
     $header['id'] = $this->t('Machine name');
+    $header['rdf_type'] = $this->t('RDF Type');
     return $header + parent::buildHeader();
   }
 
@@ -25,6 +26,7 @@ class FedoraResourceTypeListBuilder extends ConfigEntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
+    $row['rdf_type'] = $entity->getRdfType();
     // You probably want a few more properties here...
     return $row + parent::buildRow($entity);
   }

@@ -1,10 +1,10 @@
 <?
 /**
  * @file
- * Contains \Drupal\islandoraclaw\Plugin\Search\FedoraEntitySearch.
+ * Contains \Drupal\islandora\Plugin\Search\FedoraEntitySearch.
  */
 
-namespace Drupal\islandoraclaw\Plugin\Search;
+namespace Drupal\islandora\Plugin\Search;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -20,7 +20,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessibleInterface;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\islandoraclaw\FedoraResourceInterface;
+use Drupal\islandora\FedoraResourceInterface;
 use Drupal\search\Plugin\ConfigurableSearchPluginBase;
 use Drupal\search\Plugin\SearchIndexingInterface;
 use Drupal\search\SearchQuery;
@@ -175,7 +175,7 @@ class FedoraResourceSearch extends ConfigurableSearchPluginBase implements Acces
   }
 
   /**
-   * Constructs \Drupal\islandoraclaw\Plugin\Search\FedoraResourceSearch.
+   * Constructs \Drupal\islandora\Plugin\Search\FedoraResourceSearch.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -371,7 +371,7 @@ class FedoraResourceSearch extends ConfigurableSearchPluginBase implements Acces
     $results = array();
 
     // 'fedora_resource' comes from the entity type id declared
-    // in the annotation for \Drupal\islandoraclaw\Entity\FedoraResource.
+    // in the annotation for \Drupal\islandora\Entity\FedoraResource.
     // Replace this with your entity's type id.
     $entity_storage = $this->entityManager->getStorage('fedora_resource');
     $entity_render = $this->entityManager->getViewBuilder('fedora_resource');
@@ -498,7 +498,7 @@ class FedoraResourceSearch extends ConfigurableSearchPluginBase implements Acces
     }
 
     // 'fedora_resource' comes from the entity type id declared
-    // in the annotation for \Drupal\islandoraclaw\Entity\FedoraResource.
+    // in the annotation for \Drupal\islandora\Entity\FedoraResource.
     // Replace this with your entity's type id.
     $entity_storage = $this->entityManager->getStorage('fedora_resource');
 

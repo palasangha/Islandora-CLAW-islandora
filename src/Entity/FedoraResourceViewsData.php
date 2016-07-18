@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\islandoraclaw\Entity;
+namespace Drupal\islandora\Entity;
 
 use Drupal\views\EntityViewsData;
 use Drupal\views\EntityViewsDataInterface;
