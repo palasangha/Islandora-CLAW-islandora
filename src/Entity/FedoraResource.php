@@ -59,7 +59,7 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/fedora_resource/add/{fedora_resource_type}",
  *     "edit-form" = "/fedora_resource/{fedora_resource}/edit",
  *     "delete-form" = "/fedora_resource/{fedora_resource}/delete",
- *     "collection" = "/admin/structure/fedora_resource",
+ *     "collection" = "/admin/content/fedora_resource",
  *   },
  *   bundle_entity_type = "fedora_resource_type",
  *   field_ui_base_route = "entity.fedora_resource_type.edit_form"

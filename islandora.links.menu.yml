@@ -1,11 +1,3 @@
-# Fedora resource menu items definition
-entity.fedora_resource.collection:
-  title: 'Fedora resource list'
-  route_name: entity.fedora_resource.collection
-  description: 'List Fedora resource entities'
-  parent: system.admin_structure
-  weight: 100
-
 # Fedora resource type menu items definition
 entity.fedora_resource_type.collection:
   title: 'Fedora resource type list'
@@ -14,3 +6,16 @@ entity.fedora_resource_type.collection:
   parent: system.admin_structure
   weight: 99
 
+# Menu list of Islandora configuration forms 
+system.admin_config_islandora:
+  title: Islandora
+  parent: system.admin_config
+  route_name: system.admin_config_islandora 
+  weight: 100
+
+# Core Islandora configuration form 
+system.islandora_settings:
+  title: 'Core Settings'
+  parent: system.admin_config_islandora
+  route_name: system.islandora_settings 
+  description: 'Confgure core Islandora settings'
