@@ -39,9 +39,11 @@ use Drupal\user\UserInterface;
  *   data_table = "fedora_resource_field_data",
  *   revision_table = "fedora_resource_revision",
  *   revision_data_table = "fedora_resource_field_data_revision",
+ *   translatable = TRUE,
  *   admin_permission = "administer fedora resource entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "vid",
  *     "bundle" = "type",
  *     "label" = "name",
  *     "uuid" = "uuid",
@@ -258,6 +260,11 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
       ->setLabel(t('ID'))
       ->setDescription(t('The ID of the Fedora resource entity.'))
       ->setReadOnly(TRUE);
+    $fields['vid'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Fedora resource revision ID.'))
+      ->setReadOnly(TRUE)
+      ->setSetting('unsigned', TRUE);
     $fields['type'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Type'))
       ->setDescription(t('The Fedora resource type/bundle.'))
@@ -293,7 +300,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-      
+
       $fields['fedora_has_parent'] = BaseFieldDefinition::create('entity_reference')
         ->setLabel(t('Fedora has Parent'))
         ->setDescription(t('Parent Fedora Resource.'))
