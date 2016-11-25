@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.fedora_resource.field_description
+    - islandora.fedora_resource_type.collection
+id: fedora_resource.collection.field_description
+field_name: field_description
+entity_type: fedora_resource
+bundle: collection
+label: description
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+

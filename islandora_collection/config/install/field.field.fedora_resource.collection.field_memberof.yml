@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.fedora_resource.field_memberof
+    - islandora.fedora_resource_type.collection
+id: fedora_resource.collection5.field_memberof
+field_name: field_memberof
+entity_type: fedora_resource
+bundle: collection
+label: memberOf
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+
