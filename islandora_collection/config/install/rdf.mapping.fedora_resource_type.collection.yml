@@ -5,7 +5,9 @@ dependencies:
     - islandora.fedora_resource_type.collection
   module:
     - islandora
-id: fedora_resource_type.collection
+_core:
+  default_config_hash: bOdgYEs3Gr7zgXULLOK3woUktR6-b7PERSr1H_Npsac
+id: fedora_resource.collection
 targetEntityType: fedora_resource
 bundle: collection
 types:
@@ -13,19 +15,20 @@ types:
   - 'ldp:RDFSource'
   - 'ldp:Container'
 fieldMappings:
-  description: 
+  field_description:
     properties:
       - 'dc:description'
-  memberof: 
+  field_memberof:
     properties:
       - 'dc:isPartOf'
-  title:
+  name:
     properties:
       - 'dc:title'
       - 'rdf:label'
   created:
     properties:
       - 'schema:dateCreated'
+      - 'dc:created'
     datatype_callback:
       callable: 'Drupal\rdf\CommonDataConverter::dateIso8601Value'
   changed:
@@ -40,5 +43,4 @@ fieldMappings:
     properties:
       - 'schema:author'
     mapping_type: rel
-
 
