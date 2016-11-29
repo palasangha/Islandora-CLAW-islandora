@@ -12,24 +12,21 @@ id: fedora_resource.collection
 targetEntityType: fedora_resource
 bundle: collection
 types:
-  - 'schema:Thing'
-  - 'ldp:RDFSource'
-  - 'ldp:Container'
+  - 'pcdm:Collection'
+  - 'schema:CollectionPage'
 fieldMappings:
   field_description:
     properties:
-      - 'dc:description'
+      - 'schema:text'
   field_memberof:
     properties:
-      - 'dc:isPartOf'
+      - 'pcdm:memberOf'
   name:
     properties:
-      - 'dc:title'
-      - 'rdf:label'
+      - 'schema:name'
   created:
     properties:
       - 'schema:dateCreated'
-      - 'dc:created'
     datatype_callback:
       callable: 'Drupal\rdf\CommonDataConverter::dateIso8601Value'
   changed:
@@ -37,9 +34,6 @@ fieldMappings:
       - 'schema:dateModified'
     datatype_callback:
       callable: 'Drupal\rdf\CommonDataConverter::dateIso8601Value'
-  rdf_type:
-    properties:
-      - 'rdf:type'
   uid:
     properties:
       - 'schema:author'
