@@ -27,7 +27,7 @@ install:
 
 script:
   - $ISLANDORA_DIR/tests/scripts/line_endings.sh .
-  - php vendor/bin/phpcs --standard=Drupal *.module src
+  - php vendor/bin/phpcs --standard=Drupal */*.module */src
   - php vendor/bin/phpcpd --names *.module,*.inc,*.test,*.php --exclude=vendor .
 
 notifications:
