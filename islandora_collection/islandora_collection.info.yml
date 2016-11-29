@@ -1,0 +1,5 @@
+name: islandora_collection
+type: module
+description: Islandora Collection
+core: 8.x
+package: islandora
