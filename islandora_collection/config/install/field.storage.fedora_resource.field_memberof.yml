@@ -3,14 +3,15 @@ status: true
 dependencies:
   module:
     - islandora
+  enforced:
+    module:
+      - islandora_collection
 id: fedora_resource.field_memberof
 field_name: field_memberof
 entity_type: fedora_resource
-type: string
+type: entity_reference
 settings:
-  max_length: 255
-  is_ascii: false
-  case_sensitive: false
+  target_type: fedora_resource
 module: core
 locked: false
 cardinality: 1

@@ -5,8 +5,9 @@ dependencies:
     - islandora.fedora_resource_type.collection
   module:
     - islandora
-_core:
-  default_config_hash: bOdgYEs3Gr7zgXULLOK3woUktR6-b7PERSr1H_Npsac
+  enforced:
+    module:
+      - islandora_collection
 id: fedora_resource.collection
 targetEntityType: fedora_resource
 bundle: collection
