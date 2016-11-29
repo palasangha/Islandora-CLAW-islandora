@@ -5,7 +5,7 @@
 
 ## Introduction
 
-Islandora Fedora 4 Repository Module for Drupal 8.1.x
+Islandora modules for Drupal 8.2.x
 
 ## Maintainers
 
