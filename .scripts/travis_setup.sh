@@ -46,6 +46,7 @@ drush en -y syslog
 drush en -y serialization
 drush en -y basic_auth
 drush en -y rest
+drush en -y simpletest
 
 drush dl rdfui --dev
 drush en -y rdfui
