@@ -96,21 +96,8 @@ class EventGeneratorTest extends KernelTestBase {
     $json = $this->eventGenerator->generateCreateEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
-    // Assert basic message structure.
-    $this->assertTrue(array_key_exists('@context', $msg), "Context key exists");
-    $this->assertTrue($msg["@context"] == "https://www.w3.org/ns/activitystreams", "Context is activity stream.");
-
-    $this->assertTrue(array_key_exists('type', $msg), "Type key exists");
+    $this->assertBasicStructure($msg);
     $this->assertTrue($msg["type"] == "Create", "Event type is 'Create'.");
-
-    $this->assertTrue(array_key_exists('actor', $msg), "Actor key exists");
-    $this->assertTrue(array_key_exists("type", $msg["actor"]), "Type key exists for actor.");
-    $this->assertTrue($msg["actor"]["type"] == "Person", "Actor is a person.");
-    $this->assertTrue(array_key_exists("id", $msg["actor"]), "Id key exists for actor.");
-    $this->assertTrue($msg["actor"]["id"] == $this->user->toUrl()->setAbsolute()->toString(), "Id is user's uri");
-
-    $this->assertTrue(array_key_exists('object', $msg), "Object key exists");
-    $this->assertTrue($msg["object"] == $this->entity->toUrl()->setAbsolute()->toString(), "Object is entity uri.");
   }
 
   /**
@@ -120,21 +107,8 @@ class EventGeneratorTest extends KernelTestBase {
     $json = $this->eventGenerator->generateUpdateEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
-    // Assert basic message structure.
-    $this->assertTrue(array_key_exists('@context', $msg), "Context key exists");
-    $this->assertTrue($msg["@context"] == "https://www.w3.org/ns/activitystreams", "Context is activity stream.");
-
-    $this->assertTrue(array_key_exists('type', $msg), "Type key exists");
+    $this->assertBasicStructure($msg);
     $this->assertTrue($msg["type"] == "Update", "Event type is 'Update'.");
-
-    $this->assertTrue(array_key_exists('actor', $msg), "Actor key exists");
-    $this->assertTrue(array_key_exists("type", $msg["actor"]), "Type key exists for actor.");
-    $this->assertTrue($msg["actor"]["type"] == "Person", "Actor is a person.");
-    $this->assertTrue(array_key_exists("id", $msg["actor"]), "Id key exists for actor.");
-    $this->assertTrue($msg["actor"]["id"] == $this->user->toUrl()->setAbsolute()->toString(), "Id is user's uri");
-
-    $this->assertTrue(array_key_exists('object', $msg), "Object key exists");
-    $this->assertTrue($msg["object"] == $this->entity->toUrl()->setAbsolute()->toString(), "Object is entity uri.");
   }
 
   /**
@@ -144,19 +118,33 @@ class EventGeneratorTest extends KernelTestBase {
     $json = $this->eventGenerator->generateDeleteEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
-    // Assert basic message structure.
+    $this->assertBasicStructure($msg);
+    $this->assertTrue($msg["type"] == "Delete", "Event type is 'Delete'.");
+
+  }
+
+  /**
+   * Util function for repeated checks.
+   *
+   * @param array $msg
+   *   The message parsed as an array.
+   */
+  protected function assertBasicStructure(array $msg) {
+    // Looking for @context.
     $this->assertTrue(array_key_exists('@context', $msg), "Context key exists");
     $this->assertTrue($msg["@context"] == "https://www.w3.org/ns/activitystreams", "Context is activity stream.");
 
+    // Make sure it has a type.
     $this->assertTrue(array_key_exists('type', $msg), "Type key exists");
-    $this->assertTrue($msg["type"] == "Delete", "Event type is 'Delete'.");
 
+    // Make sure the actor exists, is a person, and has a uri.
     $this->assertTrue(array_key_exists('actor', $msg), "Actor key exists");
     $this->assertTrue(array_key_exists("type", $msg["actor"]), "Type key exists for actor.");
     $this->assertTrue($msg["actor"]["type"] == "Person", "Actor is a person.");
     $this->assertTrue(array_key_exists("id", $msg["actor"]), "Id key exists for actor.");
     $this->assertTrue($msg["actor"]["id"] == $this->user->toUrl()->setAbsolute()->toString(), "Id is user's uri");
 
+    // Make sure the object exists and is a uri.
     $this->assertTrue(array_key_exists('object', $msg), "Object key exists");
     $this->assertTrue($msg["object"] == $this->entity->toUrl()->setAbsolute()->toString(), "Object is entity uri.");
   }
