@@ -71,6 +71,8 @@ cd $HOME/drupal/modules
 git clone https://github.com/DiegoPino/claw-jsonld.git
 drush en -y jsonld
 
+drush en -y islandora
+
 drush -y dl bootstrap
 drush -y en bootstrap
 drush -y config-set system.theme default bootstrap

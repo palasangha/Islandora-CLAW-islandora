@@ -27,9 +27,10 @@ install:
 
 script:
   - $ISLANDORA_DIR/.scripts/line_endings.sh .
+  - cd $ISLANDORA_DIR/drupal/modules/islandora
   - php vendor/bin/phpcs --standard=Drupal **/*.module **/*.php --ignore=tests,vendor . 
   - php vendor/bin/phpcpd --names *.module,*.inc,*.test,*.php --exclude=vendor .
-  - php /var/www/html/drupal/core/scripts/run-tests.sh islandora
+  - cd $ISLANDORA_DIR/drupal; php core/scripts/run-tests.sh islandora
 
 notifications:
   irc:
