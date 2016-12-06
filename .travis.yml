@@ -20,7 +20,7 @@ before_install:
   - export ISLANDORA_DIR=$TRAVIS_BUILD_DIR
 
 install:
-#  - $TRAVIS_BUILD_DIR/tests/scripts/travis_setup.sh
+  - $TRAVIS_BUILD_DIR/tests/scripts/travis_setup.sh
   - composer install
   - php vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
 
@@ -29,7 +29,7 @@ script:
   - $ISLANDORA_DIR/.scripts/line_endings.sh .
   - php vendor/bin/phpcs --standard=Drupal **/*.module **/*.php --ignore=tests,vendor . 
   - php vendor/bin/phpcpd --names *.module,*.inc,*.test,*.php --exclude=vendor .
-  - php core/scripts/run-tests.sh islandora
+  - php /var/www/html/drupal/core/scripts/run-tests.sh islandora
 
 notifications:
   irc:
