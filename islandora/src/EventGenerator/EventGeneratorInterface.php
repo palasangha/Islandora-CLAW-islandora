@@ -5,6 +5,9 @@ namespace Drupal\islandora\EventGenerator;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\user\UserInterface;
 
+/**
+ * Inteface for a service that provides serialized event messages.
+ */
 interface EventGeneratorInterface {
 
   /**
@@ -45,4 +48,5 @@ interface EventGeneratorInterface {
    *   Serialized event message
    */
   public function generateDeleteEvent(EntityInterface $entity, UserInterface $user);
+
 }

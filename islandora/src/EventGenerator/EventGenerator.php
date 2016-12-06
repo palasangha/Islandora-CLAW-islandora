@@ -25,7 +25,7 @@ class EventGenerator implements EventGeneratorInterface {
       ],
       "object" => $entity->toUrl()->setAbsolute()->toString(),
     ]);
-  } 
+  }
 
   /**
    * {@inheritdoc}
