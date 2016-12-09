@@ -68,6 +68,12 @@ drush dl search_api
 drush -y pm-uninstall search
 drush en -y search_api
 
+drush dl typed_data
+drush en -y typed_data 
+
+drush dl rules
+drush en -y rules 
+
 cd $HOME/drupal/modules
 git clone https://github.com/DiegoPino/claw-jsonld.git
 drush en -y jsonld
