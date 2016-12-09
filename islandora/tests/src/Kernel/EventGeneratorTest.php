@@ -2,34 +2,15 @@
 
 namespace Drupal\Tests\islandora\Kernel;
 
-use Drupal\islandora\Entity\FedoraResource;
 use Drupal\islandora\EventGenerator\EventGenerator;
-use Drupal\simpletest\UserCreationTrait;
 
 /**
  * Tests the EventGenerator default implementation.
  *
  * @group islandora
+ * @coversDefaultClass \Drupal\islandora\EventGenerator\EventGenerator
  */
-class EventGeneratorTest extends IslandoraKernelTestBase {
-
-  use UserCreationTrait {
-    createUser as drupalCreateUser;
-  }
-
-  /**
-   * User entity.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $user;
-
-  /**
-   * Fedora resource entity.
-   *
-   * @var \Drupal\islandora\FedoraResourceInterface
-   */
-  protected $entity;
+class EventGeneratorTest extends EventGeneratorTestBase {
 
   /**
    * The EventGenerator to test.
@@ -44,55 +25,47 @@ class EventGeneratorTest extends IslandoraKernelTestBase {
   public function setUp() {
     parent::setUp();
 
-    // Create a test user.
-    $this->user = $this->drupalCreateUser();
-
-    // Create a test entity.
-    $this->entity = FedoraResource::create([
-      "type" => "rdf_source",
-      "uid" => 1,
-      "name" => "Test Fixture",
-      "langcode" => "und",
-      "status" => 1,
-    ]); 
-    $this->entity->save();
-
     // Create the event generator so we can test it.
     $this->eventGenerator = new EventGenerator();
   }
 
   /**
    * Tests the generateCreateEvent() method.
+   *
+   * @covers \Drupal\islandora\EventGenerator\EventGenerator::generateCreateEvent
    */
   public function testGenerateCreateEvent() {
     $json = $this->eventGenerator->generateCreateEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
     $this->assertBasicStructure($msg);
-    $this->assertTrue($msg["type"] == "Create", "Event type is 'Create'.");
+    $this->assertTrue($msg["type"] == "Create", "Event must be of type 'Create'.");
   }
 
   /**
    * Tests the generateUpdateEvent() method.
+   *
+   * @covers \Drupal\islandora\EventGenerator\EventGenerator::generateUpdateEvent
    */
   public function testGenerateUpdateEvent() {
     $json = $this->eventGenerator->generateUpdateEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
     $this->assertBasicStructure($msg);
-    $this->assertTrue($msg["type"] == "Update", "Event type is 'Update'.");
+    $this->assertTrue($msg["type"] == "Update", "Event must be of type 'Update'.");
   }
 
   /**
    * Tests the generateDeleteEvent() method.
+   *
+   * @covers \Drupal\islandora\EventGenerator\EventGenerator::generateDeleteEvent
    */
   public function testGenerateDeleteEvent() {
     $json = $this->eventGenerator->generateDeleteEvent($this->entity, $this->user);
     $msg = json_decode($json, TRUE);
 
     $this->assertBasicStructure($msg);
-    $this->assertTrue($msg["type"] == "Delete", "Event type is 'Delete'.");
-
+    $this->assertTrue($msg["type"] == "Delete", "Event must be of type 'Delete'.");
   }
 
   /**
@@ -104,21 +77,21 @@ class EventGeneratorTest extends IslandoraKernelTestBase {
   protected function assertBasicStructure(array $msg) {
     // Looking for @context.
     $this->assertTrue(array_key_exists('@context', $msg), "Context key exists");
-    $this->assertTrue($msg["@context"] == "https://www.w3.org/ns/activitystreams", "Context is activity stream.");
+    $this->assertTrue($msg["@context"] == "https://www.w3.org/ns/activitystreams", "Context must be activity stream.");
 
     // Make sure it has a type.
-    $this->assertTrue(array_key_exists('type', $msg), "Type key exists");
+    $this->assertTrue(array_key_exists('type', $msg), "Message must have 'type' key.");
 
     // Make sure the actor exists, is a person, and has a uri.
-    $this->assertTrue(array_key_exists('actor', $msg), "Actor key exists");
-    $this->assertTrue(array_key_exists("type", $msg["actor"]), "Type key exists for actor.");
-    $this->assertTrue($msg["actor"]["type"] == "Person", "Actor is a person.");
-    $this->assertTrue(array_key_exists("id", $msg["actor"]), "Id key exists for actor.");
-    $this->assertTrue($msg["actor"]["id"] == $this->user->toUrl()->setAbsolute()->toString(), "Id is user's uri");
+    $this->assertTrue(array_key_exists('actor', $msg), "Message must have 'actor' key.");
+    $this->assertTrue(array_key_exists("type", $msg["actor"]), "Actor must have 'type' key.");
+    $this->assertTrue($msg["actor"]["type"] == "Person", "Actor must be a 'Person'.");
+    $this->assertTrue(array_key_exists("id", $msg["actor"]), "Actor must have 'id' key.");
+    $this->assertTrue($msg["actor"]["id"] == $this->user->toUrl()->setAbsolute()->toString(), "Id must be a user's uri");
 
     // Make sure the object exists and is a uri.
-    $this->assertTrue(array_key_exists('object', $msg), "Object key exists");
-    $this->assertTrue($msg["object"] == $this->entity->toUrl()->setAbsolute()->toString(), "Object is entity uri.");
+    $this->assertTrue(array_key_exists('object', $msg), "Message must have 'object' key.");
+    $this->assertTrue($msg["object"] == $this->entity->toUrl()->setAbsolute()->toString(), "Object must be an entity uri.");
   }
 
 }

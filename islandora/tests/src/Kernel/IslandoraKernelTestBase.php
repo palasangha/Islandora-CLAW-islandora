@@ -6,7 +6,6 @@ use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Abstract base class for Islandora kernel tests.
- *
  */
 abstract class IslandoraKernelTestBase extends KernelTestBase {
 
@@ -27,6 +26,8 @@ abstract class IslandoraKernelTestBase extends KernelTestBase {
     'serialization',
     'rest',
     'rdf',
+    'typed_data',
+    'rules',
     'jsonld',
     'islandora'
   ];
