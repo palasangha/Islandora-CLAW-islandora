@@ -2,15 +2,18 @@
 
 namespace Drupal\islandora\EventGenerator;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\user\UserInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\rules\Core\RulesActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Abstract base class for EventGenerator RulesActions.  Sets up DI.
+ */
 abstract class EventGeneratorActionBase extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The event generator that will serialize the events.
+   *
    * @var \Drupal\islandora\EventGenerator\EventGeneratorInterface;
    */
   protected $eventGenerator;
@@ -24,6 +27,8 @@ abstract class EventGeneratorActionBase extends RulesActionBase implements Conta
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\islandora\EventGenerator\EventGeneratorInterface $event_generator
+   *   The EventGenerator service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventGeneratorInterface $event_generator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
