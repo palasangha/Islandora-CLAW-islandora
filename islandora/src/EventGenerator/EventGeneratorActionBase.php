@@ -14,7 +14,7 @@ abstract class EventGeneratorActionBase extends RulesActionBase implements Conta
   /**
    * The event generator that will serialize the events.
    *
-   * @var \Drupal\islandora\EventGenerator\EventGeneratorInterface;
+   * @var \Drupal\islandora\EventGenerator\EventGeneratorInterface
    */
   protected $eventGenerator;
 
