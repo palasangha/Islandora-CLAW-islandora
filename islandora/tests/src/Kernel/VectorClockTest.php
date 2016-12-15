@@ -9,6 +9,7 @@ use Drupal\simpletest\UserCreationTrait;
  * Tests the basic behavior of a vector clock.
  *
  * @group islandora
+ * @coversDefaultClass \Drupal\islandora\Entity\FedoraResource
  */
 class VectorClockTest extends IslandoraKernelTestBase {
 
@@ -39,16 +40,18 @@ class VectorClockTest extends IslandoraKernelTestBase {
 
   /**
    * Tests the basic behavior of the vector clock.
+   *
+   * @covers \Drupal\islandora\Entity\FedoraResource::getVclock
    */
   public function testVectorClock() {
     // Check the vclock is set to 0 when a new entity is created.
-    $this->assertTrue($this->entity->getVclock() == 0, "Vector clock initialized to zero.");
+    $this->assertTrue($this->entity->getVclock() == 0, "Vector clock must be initialized to zero.");
     
     // Edit the entity.
     $this->entity->setName("Edited Test Fixture")->save();
 
     // Check the vclock is incremented when the entity is updated.
-    $this->assertTrue($this->entity->getVclock() == 1, "Vector clock incremented on update.");
+    $this->assertTrue($this->entity->getVclock() == 1, "Vector clock must be incremented on update.");
   }
 
 }

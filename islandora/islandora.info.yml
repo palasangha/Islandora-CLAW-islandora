@@ -13,4 +13,5 @@ dependencies:
   - options
   - inline_entity_form
   - jsonld
+  - rules
 version: '8.x-1.x-dev'
