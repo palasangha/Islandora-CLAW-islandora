@@ -235,21 +235,30 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
    * {@inheritdoc}
    */
   public function hasParent() {
-    return ($this->get('fedora_has_parent') !== NULL);
+    return ($this->get('fedora_has_parent')->first() !== NULL);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getParent() {
-    return $this->get('fedora_has_parent')->getEntity();
+    return $this->get('fedora_has_parent')
+      ->first()
+      ->get('entity')
+      ->getTarget()
+      ->getValue();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getParentId() {
-    return $this->get('fedora_has_parent')->getEntity()->id();
+    return $this->get('fedora_has_parent')
+      ->first()
+      ->get('entity')
+      ->getTarget()
+      ->getValue()
+      ->id();
   }
 
   /**
@@ -270,7 +279,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
    */
   public static function getFedoraRoot() {
     // Just stub code, we need to figure out what "root is" in this context.
-    return array('root');
+    return NULL;
   }
 
   /**
