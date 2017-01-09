@@ -81,5 +81,6 @@ function islandora_rdf_namespaces() {
     'ore' => 'http://www.openarchives.org/ore/terms/',
     'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'islandora' => 'http://islandora.ca/CLAW/',
+    'pcdm' => 'http://pcdm.org/models#',
   );
 }
