@@ -2,31 +2,20 @@ langcode: en
 status: true
 dependencies:
   config:
-    - islandora.fedora_resource_type.collection
+    - islandora.fedora_resource_type.non_rdf_source
   module:
     - islandora
-  enforced:
-    module:
-      - islandora_collection
-id: fedora_resource.collection
+id: fedora_resource_type.non_rdf_source
 targetEntityType: fedora_resource
-bundle: collection
+bundle: non_rdf_source
 types:
-  - 'pcdm:Collection'
-  - 'schema:CollectionPage'
+  - 'schema:Thing'
+  - 'ldp:NonRDFSource'
 fieldMappings:
-  field_description:
+  title:
     properties:
-      - 'dc:description'
-  field_memberof:
-    properties:
-      - 'pcdm:memberOf'
-  uuid:
-    properties:
-      - 'islandora:hasURN'
-  name:
-    properties:
-      - 'dc:title'
+      - 'dc11:title'
+      - 'rdf:label'
   created:
     properties:
       - 'schema:dateCreated'
@@ -40,11 +29,15 @@ fieldMappings:
   rdf_type:
     properties:
       - 'rdf:type'
-  vclock:
-    properties:
-      - 'islandora:vclock'
   uid:
     properties:
       - 'schema:author'
     mapping_type: rel
-
+  fedora_has_parent:
+    properties:
+      - 'fedora:hasParent'
+    mapping_type: rel
+  ldp_contains:
+    properties:
+      - 'ldp:contains'
+    mapping_type: rel
