@@ -4,6 +4,9 @@ namespace Drupal\islandora\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Stomp\Client;
+use Stomp\Exception\StompException;
+use Stomp\StatefulStomp;
 
 /**
  * Config form for Islandora settings.
@@ -12,9 +15,8 @@ class IslandoraSettingsForm extends ConfigFormBase {
 
   const CONFIG_NAME = 'islandora.settings';
   const BROKER_URL = 'broker_url';
-  const TRIPLESTORE_INDEX_QUEUE = 'triplestore_index_queue';
   const FEDORA_REST_ENDPOINT = 'fedora_rest_endpoint';
-  const FEDORA_INDEXING_QUEUE = 'fedora_indexing_queue';
+  const BROADCAST_QUEUE = 'broadcast_queue';
 
   /**
    * {@inheritdoc}
@@ -44,10 +46,10 @@ class IslandoraSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get(self::BROKER_URL),
     );
 
-    $form[self::TRIPLESTORE_INDEX_QUEUE] = array(
+    $form[self::BROADCAST_QUEUE] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Triplestore Index Queue'),
-      '#default_value' => $config->get(self::TRIPLESTORE_INDEX_QUEUE),
+      '#title' => $this->t('Broadcast Queue'),
+      '#default_value' => $config->get(self::BROADCAST_QUEUE),
     );
 
     $form[self::FEDORA_REST_ENDPOINT] = array(
@@ -57,14 +59,36 @@ class IslandoraSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get(self::FEDORA_REST_ENDPOINT),
     );
 
-    $form[self::FEDORA_INDEXING_QUEUE] = array(
-      '#type' => 'textfield',
-      '#title' => $this->t('Fedora Indexing Queue Name'),
-      '#description' => $this->t('Name of the queue where Drupal will publish updates to have "indexed" to Fedora'),
-      '#default_value' => $config->get(self::FEDORA_INDEXING_QUEUE),
-    );
-
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    // Validate broker url by actually connecting with a stomp client.
+    $brokerUrl = $form_state->getValue(self::BROKER_URL);
+
+    // Attempt to subscribe to a dummy queue.
+    try {
+      $stomp = new StatefulStomp(
+        new Client(
+          $brokerUrl
+        )
+      );
+      $stomp->subscribe('dummy-queue-for-validation');
+      $stomp->unsubscribe();
+    }
+    // Invalidate the form if there's an issue.
+    catch (StompException $e) {
+      $form_state->setErrorByName(
+        self::BROKER_URL,
+        $this->t(
+          'Cannot connect to message broker at @broker_url',
+          ['@broker_url' => $brokerUrl]
+        )
+      );
+    }
   }
 
   /**
@@ -75,9 +99,8 @@ class IslandoraSettingsForm extends ConfigFormBase {
 
     $config
       ->set(self::BROKER_URL, $form_state->getValue(self::BROKER_URL))
-      ->set(self::TRIPLESTORE_INDEX_QUEUE, $form_state->getValue(self::TRIPLESTORE_INDEX_QUEUE))
+      ->set(self::BROADCAST_QUEUE, $form_state->getValue(self::BROADCAST_QUEUE))
       ->set(self::FEDORA_REST_ENDPOINT, $form_state->getValue(self::FEDORA_REST_ENDPOINT))
-      ->set(self::FEDORA_INDEXING_QUEUE, $form_state->getValue(self::FEDORA_INDEXING_QUEUE))
       ->save();
 
     parent::submitForm($form, $form_state);
