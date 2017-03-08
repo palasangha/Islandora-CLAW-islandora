@@ -15,4 +15,4 @@ dependencies:
   - jsonld
   - rules
   - search_api
-version: '8.x-1.x-dev'
+  - jwt

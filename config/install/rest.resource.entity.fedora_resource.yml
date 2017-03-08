@@ -21,6 +21,4 @@ configuration:
       - json
       - xml
     supported_auth:
-      - basic_auth
-      - cookie
-
+      - jwt_auth

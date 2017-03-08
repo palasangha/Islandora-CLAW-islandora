@@ -12,3 +12,9 @@ services:
     class: Stomp\StatefulStomp
     factory: ['Drupal\islandora\StompFactory', create]
     arguments: ['@config.factory']
+  islandora.jwt-subscriber:
+    class: Drupal\islandora\EventSubscriber\JwtEventSubscriber
+    factory: ['Drupal\islandora\EventSubscriber\JwtEventSubscriber', create]
+    arguments: ['@entity_type.manager', '@current_user']
+    tags:
+      - { name: event_subscriber }

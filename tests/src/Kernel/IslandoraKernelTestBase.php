@@ -30,6 +30,8 @@ abstract class IslandoraKernelTestBase extends KernelTestBase {
     'rules',
     'jsonld',
     'views',
+    'key',
+    'jwt',
     'islandora',
   ];
 

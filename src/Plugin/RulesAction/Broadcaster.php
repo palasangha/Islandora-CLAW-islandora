@@ -5,6 +5,7 @@ namespace Drupal\islandora\Plugin\RulesAction;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\islandora\Form\IslandoraSettingsForm;
 use Drupal\rules\Core\RulesActionBase;
+use Drupal\jwt\Authentication\Provider\JwtAuth;
 use Stomp\Exception\StompException;
 use Stomp\StatefulStomp;
 use Stomp\Transport\Message;
@@ -46,6 +47,13 @@ class Broadcaster extends RulesActionBase implements ContainerFactoryPluginInter
   protected $broadcastQueue;
 
   /**
+   * The JWT Auth Service.
+   *
+   * @var \Drupal\jwt\Authentication\Provider\JwtAuth
+   */
+  protected $auth;
+
+  /**
    * Constructs a BroadcastAction.
    *
    * @param array $configuration
@@ -58,12 +66,22 @@ class Broadcaster extends RulesActionBase implements ContainerFactoryPluginInter
    *   Name of queue that will handle distributing the broadcast.
    * @param \Stomp\StatefulStomp $stomp
    *   Stomp client.
+   * @param \Drupal\jwt\Authentication\Provider\JwtAuth $auth
+   *   JWT Auth client.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, $broadcast_queue, StatefulStomp $stomp) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    $broadcast_queue,
+    StatefulStomp $stomp,
+    JwtAuth $auth
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->broadcastQueue = $broadcast_queue;
     $this->stomp = $stomp;
+    $this->auth = $auth;
   }
 
   /**
@@ -79,7 +97,8 @@ class Broadcaster extends RulesActionBase implements ContainerFactoryPluginInter
       $plugin_id,
       $plugin_definition,
       $broadcastQueue,
-      $container->get('islandora.stomp')
+      $container->get('islandora.stomp'),
+      $container->get('jwt.authentication.jwt')
     );
   }
 
@@ -95,9 +114,25 @@ class Broadcaster extends RulesActionBase implements ContainerFactoryPluginInter
     // Transform recipients array into comma searated list.
     $recipients = array_map('trim', $recipients);
     $recipients = implode(',', $recipients);
+    $headers = ['IslandoraBroadcastRecipients' => $recipients];
+
+    // Include a token for later authentication in the message.
+    $token = $this->auth->generateToken();
+    if ($token !== NULL) {
+      $headers['Authorization'] = "Bearer $token";
+    }
+    else {
+      // JWT isn't properly configured. Log and notify user.
+      \Drupal::logger('islandora')->error(
+        'Error getting JWT token for message: @msg', ['@msg' => $e->getMessage()]
+      );
+      drupal_set_message(
+        t('Error getting JWT token for message. Check JWT Configuration.'), 'error'
+      );
+    }
 
     // Transform message from string into a proper message object.
-    $message = new Message($message, ['IslandoraBroadcastRecipients' => $recipients]);
+    $message = new Message($message, $headers);
 
     // Send the message.
     try {
