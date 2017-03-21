@@ -120,6 +120,28 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
   /**
    * {@inheritdoc}
    */
+  public static function postDelete(EntityStorageInterface $storage, array $entities) {
+    parent::postDelete($storage, $entities);
+
+    // This removes references to deleted parents. But this could be
+    // used to remove child entities instead.
+    foreach ($entities as $entity) {
+      if ($entity->getEntityType()->getBundleEntityType() == 'fedora_resource_type') {
+        $references = self::getInboundReferences($entity);
+        if ($references) {
+          $ref_entities = $storage->loadMultiple($references);
+          foreach ($ref_entities as $ref_entity) {
+            $ref_entity->removeParent();
+            $ref_entity->save();
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getType() {
     return $this->bundle();
   }
@@ -203,7 +225,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
    * {@inheritdoc}
    */
   public function hasParent() {
-    return ($this->get('fedora_has_parent')->first() !== NULL);
+    return (!$this->get('fedora_has_parent')->isEmpty());
   }
 
   /**
@@ -232,8 +254,16 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
   /**
    * {@inheritdoc}
    */
-  public function setParent(EntityTypeInterface $entity) {
+  public function setParent(FedoraResourceInterface $entity) {
     $this->set('fedora_has_parent', $entity);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeParent() {
+    $this->set('fedora_has_parent', NULL);
     return $this;
   }
 
@@ -248,6 +278,22 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
   public static function getFedoraRoot() {
     // Just stub code, we need to figure out what "root is" in this context.
     return NULL;
+  }
+
+  /**
+   * Get all the objects that have $entity as a fedora_has_parent.
+   *
+   * @param \Drupal\islandora\FedoraResourceInterface $entity
+   *   The entity to find inbound references for.
+   *
+   * @return array
+   *   An array of entity ids
+   */
+  protected static function getInboundReferences(FedoraResourceInterface $entity) {
+    // TODO: Not use static loading.
+    $query = \Drupal::entityQuery('fedora_resource');
+    $query->condition('fedora_has_parent', $entity->id());
+    return $query->execute();
   }
 
   /**
@@ -305,7 +351,7 @@ class FedoraResource extends ContentEntityBase implements FedoraResourceInterfac
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'fedora_resource')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\islandora\Entity\FedoraResource::getFedoraRoot')
+      ->setDefaultValueCallback('\Drupal\islandora\Entity\FedoraResource::getFedoraRoot')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',
