@@ -1,48 +1,43 @@
-uuid: 3ef878c1-3187-4141-aba1-2aac5acc9366
+uuid: b8d1db0c-be8f-47a7-889f-ac710db2e18a
 langcode: en
 status: true
 dependencies:
-  module:
-    - islandora
-    - rules
   enforced:
     module:
       - islandora
-_core:
-  default_config_hash: EKVRKXObBdrm-lGcG3RPpF8sg0tZSZbZx00lkzm42_E
-id: broadcast_create_event
-label: 'Broadcast Create Event'
+id: broadcast_content_create_event
+label: 'Broadcast Content Create Event'
 events:
   -
-    event_name: 'rules_entity_insert:fedora_resource'
-description: 'Broadcasts a ''Create'' event when a user creates a new FedoraResource.'
+    event_name: 'rules_entity_insert:node'
+description: 'Broadcasts an AS2 event to a message broker when Content is created.'
 tags:
   - ''
 config_version: '3'
 expression:
   id: rules_rule
-  uuid: d25688b0-eef1-46b0-acf4-98a6d1ccd76a
+  uuid: 40cabb74-fcc7-4498-90f9-3a4ec71b3710
   conditions:
     id: rules_and
-    uuid: 6648629a-0b52-4352-bb85-df2cbafb7db2
+    uuid: 8e0d7b29-15f4-448d-b79a-d85ef97d274e
     conditions: {  }
   actions:
     id: rules_action_set
-    uuid: 957db51c-d055-4350-8caa-4ad773172e87
+    uuid: 0f832259-2aa1-45a4-83df-d9e0ff4c7edd
     actions:
       -
         id: rules_action
-        uuid: d483f5bc-fd36-4d7c-baa4-66234b438d1a
+        uuid: 922264b9-3db1-42eb-9e01-e781a58a3695
         context_values: {  }
         context_mapping:
-          entity: fedora_resource
+          entity: node
           user: '@user.current_user_context:current_user'
         context_processors: {  }
         provides_mapping: {  }
         action_id: islandora_create_event_generator
       -
         id: rules_action
-        uuid: 2afa7216-91bb-49a3-a567-e504ba8f95e1
+        uuid: 0e953790-c751-4de8-99b3-c729ba1e09e3
         context_values:
           recipients:
             - "activemq:queue:islandora-indexing-fcrepo-create\r"

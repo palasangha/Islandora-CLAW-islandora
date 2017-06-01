@@ -1,35 +1,33 @@
-uuid: c4447a0b-a2a8-4f32-947b-fbe1094632d5
+uuid: 4474df44-01ee-4abf-84f9-9aa41d787d27
 langcode: en
 status: true
 dependencies:
   enforced:
     module:
       - islandora
-_core:
-  default_config_hash: mRt_MC0dKA68qaoXI3WlnCg-ta5Wry0dLR2dpOqY4to
 id: broadcast_media_create_event
 label: 'Broadcast Media Create Event'
 events:
   -
     event_name: 'rules_entity_insert:media'
-description: 'Broadcasts a ''Create'' event when a user creates a new Media.'
+description: 'Broadcasts an AS2 event to a message broker when Media is created.'
 tags:
   - ''
 config_version: '3'
 expression:
   id: rules_rule
-  uuid: 3294a215-25d9-4bfe-9e84-745f381107c5
+  uuid: d4ba4cc1-3b18-400d-867f-1605d72d9717
   conditions:
     id: rules_and
-    uuid: 6dbe3930-7d39-4927-890e-4af4e8fb57fc
+    uuid: 9ccf9d29-89be-4b1d-8417-230e33f8fd6f
     conditions: {  }
   actions:
     id: rules_action_set
-    uuid: 470ed84d-b33f-4ff4-a584-481605bc826c
+    uuid: 47afb6b3-e39e-4c3a-af47-669e963353a2
     actions:
       -
         id: rules_action
-        uuid: 59b35164-5e52-4664-afe1-86e8f3bda01d
+        uuid: dff4ebfb-84c5-4d0f-acf7-62e3edbab143
         context_values: {  }
         context_mapping:
           entity: media
@@ -39,7 +37,7 @@ expression:
         action_id: islandora_create_event_generator
       -
         id: rules_action
-        uuid: f7880d70-1411-4c60-a065-a7d187b604db
+        uuid: 6b0d07b3-048e-43ac-8a9f-2c5203f8080e
         context_values:
           recipients:
             - "activemq:queue:islandora-indexing-triplestore\r"

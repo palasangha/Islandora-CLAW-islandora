@@ -1,24 +1,27 @@
-uuid: 08836232-8f53-422b-97bd-4394a9660480
+uuid: bf3d7c56-77d9-4154-a7b8-bb77c7188569
 langcode: en
 status: true
 dependencies:
   module:
+    - basic_auth
+    - hal
     - jsonld
     - jwt
     - media_entity
-    - serialization
     - user
   enforced:
     module:
       - islandora
 id: entity.media
 plugin_id: 'entity:media'
-granularity: method
+granularity: resource
 configuration:
-  GET:
-    supported_formats:
-      - jsonld
-      - json
-    supported_auth:
-      - jwt_auth
-      - cookie
+  methods:
+    - GET
+  formats:
+    - hal_json
+    - jsonld
+  authentication:
+    - basic_auth
+    - jwt_auth
+    - cookie

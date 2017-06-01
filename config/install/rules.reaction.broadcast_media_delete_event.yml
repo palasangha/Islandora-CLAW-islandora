@@ -1,35 +1,33 @@
-uuid: 33b8afa6-1507-4f04-acc9-5a18ca2b0ccc
+uuid: 71df1b5d-2f04-42fa-a660-5375de9c6c51
 langcode: en
 status: true
 dependencies:
   enforced:
     module:
       - islandora
-_core:
-  default_config_hash: Jejr-Hg2lX1o7mdUt_RBxW0xfzOKhoFbGGpepW_SoZg
 id: broadcast_media_delete_event
 label: 'Broadcast Media Delete Event'
 events:
   -
     event_name: 'rules_entity_delete:media'
-description: 'Broadcasts a ''Delete'' event when a user deletes a Media.'
+description: 'Broadcasts an AS2 event to a message broker when Media is deleted.'
 tags:
   - ''
 config_version: '3'
 expression:
   id: rules_rule
-  uuid: 40abb71f-da16-49c3-8646-19921e911b7e
+  uuid: c12184e7-8230-4bc7-b625-2a26b4a5a913
   conditions:
     id: rules_and
-    uuid: 34e4e2d6-f6be-4644-ba30-b434b7f2f82b
+    uuid: 5147d740-4e32-4935-8c30-f893e7c3f86f
     conditions: {  }
   actions:
     id: rules_action_set
-    uuid: 4032fcca-f4ab-471e-afa0-f53e2148848d
+    uuid: 4a023b99-1cf8-410a-a082-b0c0369a807d
     actions:
       -
         id: rules_action
-        uuid: 8d9547b4-477d-4442-b8b6-2d677cf79d1d
+        uuid: 1fdc07dc-72ba-4666-abb8-8d79f29b67ff
         context_values: {  }
         context_mapping:
           entity: media
@@ -39,7 +37,7 @@ expression:
         action_id: islandora_delete_event_generator
       -
         id: rules_action
-        uuid: 371b1104-1aa6-4b3d-82cf-e27168e664ae
+        uuid: 75d0cf84-715b-4167-8ec2-92047a0bec56
         context_values:
           recipients:
             - "activemq:queue:islandora-indexing-triplestore\r"
