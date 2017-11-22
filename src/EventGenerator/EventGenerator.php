@@ -3,8 +3,11 @@
 namespace Drupal\islandora\EventGenerator;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\media_entity\Entity\Media;
+use Drupal\Core\Url;
+use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
+use Drupal\media_entity\MediaInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * The default EventGenerator implementation.
@@ -17,20 +20,8 @@ class EventGenerator implements EventGeneratorInterface {
    * {@inheritdoc}
    */
   public function generateCreateEvent(EntityInterface $entity, UserInterface $user) {
-    $event = [
-      "@context" => "https://www.w3.org/ns/activitystreams",
-      "type" => "Create",
-      "actor" => [
-        "type" => "Person",
-        "id" => $user->toUrl()->setAbsolute()->toString(),
-      ],
-      "object" => $entity->toUrl()->setAbsolute()->toString(),
-    ];
-
-    if ($entity instanceof Media) {
-      $this->addAttachment($entity, $event);
-    }
-
+    $event = $this->generateEvent($entity, $user);
+    $event["type"] = "Create";
     return json_encode($event);
   }
 
@@ -38,20 +29,8 @@ class EventGenerator implements EventGeneratorInterface {
    * {@inheritdoc}
    */
   public function generateUpdateEvent(EntityInterface $entity, UserInterface $user) {
-    $event = [
-      "@context" => "https://www.w3.org/ns/activitystreams",
-      "type" => "Update",
-      "actor" => [
-        "type" => "Person",
-        "id" => $user->toUrl()->setAbsolute()->toString(),
-      ],
-      "object" => $entity->toUrl()->setAbsolute()->toString(),
-    ];
-
-    if ($entity instanceof Media) {
-      $this->addAttachment($entity, $event);
-    }
-
+    $event = $this->generateEvent($entity, $user);
+    $event["type"] = "Update";
     return json_encode($event);
   }
 
@@ -59,57 +38,158 @@ class EventGenerator implements EventGeneratorInterface {
    * {@inheritdoc}
    */
   public function generateDeleteEvent(EntityInterface $entity, UserInterface $user) {
-    $event = [
-      "@context" => "https://www.w3.org/ns/activitystreams",
-      "type" => "Delete",
-      "actor" => [
-        "type" => "Person",
-        "id" => $user->toUrl()->setAbsolute()->toString(),
-      ],
-      "object" => $entity->toUrl()->setAbsolute()->toString(),
-    ];
-
-    if ($entity instanceof Media) {
-      $this->addAttachment($entity, $event);
-    }
-
+    $event = $this->generateEvent($entity, $user);
+    $event["type"] = "Delete";
     return json_encode($event);
   }
 
   /**
-   * Adds the 'attachment' info to the event array.
+   * Shared event generation function that does not impose a 'Type'.
    *
-   * @param \Drupal\media_entity\Entity\Media $entity
-   *   The entity that was updated.
-   * @param array $event
-   *   Array of info to be serialized to jsonld.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity that was created.
+   * @param \Drupal\user\UserInterface $user
+   *   The user who created the entity.
+   *
+   * @return array
+   *   Event message as an array.
    */
-  protected function addAttachment(Media $entity, array &$event) {
-    if ($entity->hasField("field_image")) {
-      $file = $entity->field_image->entity;
+  protected function generateEvent(EntityInterface $entity, UserInterface $user) {
+
+    $user_url = $user->toUrl()->setAbsolute()->toString();
+
+    return [
+      "@context" => "https://www.w3.org/ns/activitystreams",
+      "actor" => [
+        "type" => "Person",
+        "id" => "urn:uuid:{$user->uuid()}",
+        "url" => [
+          [
+            "name" => "Canonical",
+            "type" => "Link",
+            "href" => "$user_url",
+            "mediaType" => "text/html",
+            "rel" => "canonical",
+          ],
+        ],
+      ],
+      "object" => [
+        "id" => "urn:uuid:{$entity->uuid()}",
+        "url" => $this->generateEntityLinks($entity),
+      ],
+    ];
+  }
+
+  /**
+   * Generates entity urls depending on entity type.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   *
+   * @return array
+   *   AS2 Links.
+   */
+  protected function generateEntityLinks(EntityInterface $entity) {
+    if ($entity instanceof FileInterface) {
+      return $this->generateFileLinks($entity);
     }
-    elseif ($entity->hasField("field_file")) {
-      $file = $entity->field_file->entity;
-    }
-    else {
-      \Drupal::logger('islandora')->warning(
-        "Cannot parse 'field_image' or 'field_file' from Media entity {$entity->id()}"
-      );
-      return;
+    elseif ($entity instanceof MediaInterface) {
+      return $this->generateMediaLinks($entity);
     }
 
-    if ($file === NULL) {
-      \Drupal::logger('islandora')->debug(
-        "'field_image' or 'field_file' is null in Media entity {$entity->id()}"
-      );
-      return;
-    }
+    return $this->generateNodeLinks($entity);
+  }
 
-    $url = file_create_url($file->getFileUri());
-    $mime = $file->getMimeType();
-    $event['attachment'] = [
-      'url' => $url,
-      'mediaType' => $mime,
+  /**
+   * Generates file urls.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   The file.
+   *
+   * @return array
+   *   AS2 Links.
+   */
+  protected function generateFileLinks(FileInterface $file) {
+    $file_url = $file->url();
+    $checksum_url = Url::fromRoute('view.file_checksum.rest_export_1', ['file' => $file->id()])
+      ->setAbsolute()
+      ->toString();
+
+    return [
+      [
+        "name" => "File",
+        "type" => "Link",
+        "href" => "$file_url",
+        "mediaType" => $file->getMimeType(),
+      ],
+      [
+        "name" => "Checksum",
+        "type" => "Link",
+        "href" => "$checksum_url?_format=json",
+        "mediaType" => "application/json",
+      ],
+    ];
+  }
+
+  /**
+   * Generates media urls.
+   *
+   * @param \Drupal\media_entity\MediaInterface $media
+   *   The media.
+   *
+   * @return array
+   *   AS2 Links.
+   */
+  protected function generateMediaLinks(MediaInterface $media) {
+    $url = $media->toUrl()->setAbsolute()->toString();
+    return [
+        [
+          "name" => "Canoncial",
+          "type" => "Link",
+          "href" => "$url",
+          "mediaType" => "text/html",
+          "rel" => "canonical",
+        ],
+        [
+          "name" => "JSONLD",
+          "type" => "Link",
+          "href" => "$url?_format=jsonld",
+          "mediaType" => "application/ld+json",
+        ],
+        [
+          "name" => "JSON",
+          "type" => "Link",
+          "href" => "$url?_format=json",
+          "mediaType" => "application/json",
+        ],
+    ];
+  }
+
+  /**
+   * Generates node urls.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node.
+   *
+   * @return array
+   *   AS2 Links.
+   */
+  protected function generateNodeLinks(NodeInterface $node) {
+    $url = $node->toUrl()->setAbsolute()->toString();
+    return [
+        [
+          "name" => "Canoncial",
+          "type" => "Link",
+          "href" => "$url",
+          "mediaType" => "text/html",
+          "rel" => "canonical",
+        ],
+        [
+          "name" => "JSONLD",
+          "type" => "Link",
+          "href" => "$url?_format=jsonld",
+          "mediaType" => "application/ld+json",
+        ],
     ];
   }
 

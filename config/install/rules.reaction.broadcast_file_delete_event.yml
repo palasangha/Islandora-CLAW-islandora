@@ -1,47 +1,46 @@
-uuid: b8d1db0c-be8f-47a7-889f-ac710db2e18a
+uuid: d35441d4-62d6-4e0d-bf6f-23ff32eab457
 langcode: en
 status: true
 dependencies:
   enforced:
     module:
       - islandora
-id: broadcast_content_create_event
-label: 'Broadcast Content Create Event'
+id: broadcast_file_delete_event
+label: 'Broadcast File Delete Event'
 events:
   -
-    event_name: 'rules_entity_insert:node'
-description: 'Broadcasts an AS2 event to a message broker when Content is created.'
+    event_name: 'rules_entity_delete:file'
+description: 'Broadcasts an AS2 event to a message broker when a File is deleted.'
 tags:
   - ''
 config_version: '3'
 expression:
   id: rules_rule
-  uuid: 40cabb74-fcc7-4498-90f9-3a4ec71b3710
+  uuid: 69e8870c-9d20-4cc3-9a17-de940d4c9932
   conditions:
     id: rules_and
-    uuid: 8e0d7b29-15f4-448d-b79a-d85ef97d274e
+    uuid: f465ad23-88a2-4026-a7ca-dbfc2d3aa031
     conditions: {  }
   actions:
     id: rules_action_set
-    uuid: 0f832259-2aa1-45a4-83df-d9e0ff4c7edd
+    uuid: 65ce1b3b-7986-4cf2-ab03-b950212f505e
     actions:
       -
         id: rules_action
-        uuid: 922264b9-3db1-42eb-9e01-e781a58a3695
+        uuid: 2d6b2435-e986-4e53-8831-e4328aa63af3
         context_values: {  }
         context_mapping:
-          entity: node
+          entity: file
           user: '@user.current_user_context:current_user'
         context_processors: {  }
         provides_mapping: {  }
-        action_id: islandora_create_event_generator
+        action_id: islandora_delete_event_generator
       -
         id: rules_action
-        uuid: 0e953790-c751-4de8-99b3-c729ba1e09e3
+        uuid: f1a6a455-5486-4a4a-a3c9-4e9b3867cf64
         context_values:
           recipients:
-            - "activemq:queue:islandora-indexing-fcrepo-content\r"
-            - 'activemq:queue:islandora-indexing-triplestore-index'
+            - 'activemq:queue:islandora-indexing-fcrepo-delete'
         context_mapping:
           message: event_message
         context_processors:

@@ -1,4 +1,4 @@
-uuid: 71df1b5d-2f04-42fa-a660-5375de9c6c51
+uuid: af85f943-2cc0-455c-97b0-4035d15f55ec
 langcode: en
 status: true
 dependencies:
@@ -16,18 +16,18 @@ tags:
 config_version: '3'
 expression:
   id: rules_rule
-  uuid: c12184e7-8230-4bc7-b625-2a26b4a5a913
+  uuid: abb78ad6-5f27-43e7-890c-c2a12e76ce51
   conditions:
     id: rules_and
-    uuid: 5147d740-4e32-4935-8c30-f893e7c3f86f
+    uuid: 8c386012-6796-4138-b4e7-d438916c713f
     conditions: {  }
   actions:
     id: rules_action_set
-    uuid: 4a023b99-1cf8-410a-a082-b0c0369a807d
+    uuid: 6599d3f0-dcd7-482c-bcb4-fa76b012da6a
     actions:
       -
         id: rules_action
-        uuid: 1fdc07dc-72ba-4666-abb8-8d79f29b67ff
+        uuid: 7003fe72-49f7-4a3a-b95b-781ef1c61615
         context_values: {  }
         context_mapping:
           entity: media
@@ -37,11 +37,10 @@ expression:
         action_id: islandora_delete_event_generator
       -
         id: rules_action
-        uuid: 75d0cf84-715b-4167-8ec2-92047a0bec56
+        uuid: 8a5dc149-9629-4e94-a8d5-3ff6069d6af6
         context_values:
           recipients:
-            - "activemq:queue:islandora-indexing-triplestore\r"
-            - 'activemq:queue:islandora-indexing-fcrepo-binary-delete'
+            - 'activemq:queue:islandora-indexing-triplestore-delete'
         context_mapping:
           message: event_message
         context_processors:
