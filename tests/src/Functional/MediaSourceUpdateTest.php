@@ -9,7 +9,7 @@ use Drupal\Core\Url;
  *
  * @group islandora
  */
-class MediaSourceControllerTest extends IslandoraFunctionalTestBase {
+class MediaSourceUpdateTest extends IslandoraFunctionalTestBase {
 
   /**
    * {@inheritdoc}
@@ -99,7 +99,7 @@ class MediaSourceControllerTest extends IslandoraFunctionalTestBase {
       'http_errors' => FALSE,
       'headers' => [
         'Content-Type' => 'image/jpeg',
-        'Content-Disposition' => 'attachment; garbage="test.jpeg"',
+        'Content-Disposition' => 'garbage; filename="test.jpeg"',
       ],
       'body' => $image,
     ];
@@ -145,9 +145,9 @@ class MediaSourceControllerTest extends IslandoraFunctionalTestBase {
     $updated_image = file_get_contents($updated['field_image'][0]['url']);
 
     $this->assertTrue($original_mimetype != $updated_mimetype, "Mimetypes should be updated with media source update");
-    $this->assertTrue($original_width != $updated_width, "Height should be updated with media source update");
-    $this->assertTrue($original_height != $updated_height, "Width should be updated with media source update");
-    $this->assertTrue($original_image != $updated_image, "Width should be updated with media source update");
+    $this->assertTrue($original_width != $updated_width, "Width should be updated with media source update");
+    $this->assertTrue($original_height != $updated_height, "Height should be updated with media source update");
+    $this->assertTrue($original_image != $updated_image, "Image should be updated with media source update");
 
     $this->assertTrue($updated_mimetype == "image/jpeg", "Invalid mimetype.  Expected image/jpeg, received $updated_mimetype");
     $this->assertTrue($updated_width == 295, "Invalid width.  Expected 295, received $updated_width");
