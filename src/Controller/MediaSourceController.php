@@ -7,8 +7,10 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\media_entity\MediaInterface;
+use Drupal\media\MediaInterface;
+use Drupal\media\MediaTypeInterface;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\TermInterface;
 use Drupal\islandora\MediaSource\MediaSourceService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,7 +74,7 @@ class MediaSourceController extends ControllerBase {
   /**
    * Updates a source file for a Media.
    *
-   * @param \Drupal\media_entity\MediaInterface $media
+   * @param \Drupal\media\MediaInterface $media
    *   The media whose source file you want to update.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
@@ -89,24 +91,6 @@ class MediaSourceController extends ControllerBase {
       throw new BadRequestHttpException("Missing Content-Type header");
     }
 
-    $content_length = $request->headers->get('Content-Length', 0);
-
-    if ($content_length <= 0) {
-      throw new BadRequestHttpException("Missing Content-Length");
-    }
-
-    $content_disposition = $request->headers->get('Content-Disposition', "");
-
-    if (empty($content_disposition)) {
-      throw new BadRequestHttpException("Missing Content-Disposition header");
-    }
-
-    $matches = [];
-    if (!preg_match('/attachment; filename="(.*)"/', $content_disposition, $matches)) {
-      throw new BadRequestHttpException("Malformed Content-Disposition header");
-    }
-    $filename = $matches[1];
-
     // Since we update both the Media and its File, do this in a transaction.
     $transaction = $this->database->startTransaction();
 
@@ -115,9 +99,7 @@ class MediaSourceController extends ControllerBase {
       $this->service->updateSourceField(
         $media,
         $request->getContent(TRUE),
-        $content_type,
-        $content_length,
-        $filename
+        $content_type
       );
 
       return new Response("", 204);
@@ -137,10 +119,10 @@ class MediaSourceController extends ControllerBase {
    *
    * @param \Drupal\node\NodeInterface $node
    *   The Node to which you want to add a Media.
-   * @param string $field
-   *   Name of field on Node to reference Media.
-   * @param string $bundle
-   *   Name of bundle for Media to create.
+   * @param \Drupal\media\MediaTypeInterface $media_type
+   *   Media type for new media.
+   * @param \Drupal\taxonomy\TermInterface $taxonomy_term
+   *   Term from the 'Behavior' vocabulary to give to new media.
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The request object.
    *
@@ -149,22 +131,16 @@ class MediaSourceController extends ControllerBase {
    *
    * @throws \Symfony\Component\HttpKernel\Exception\HttpException
    */
-  public function addToNode(
+  public function putToNode(
     NodeInterface $node,
-    $field,
-    $bundle,
+    MediaTypeInterface $media_type,
+    TermInterface $taxonomy_term,
     Request $request
   ) {
     $content_type = $request->headers->get('Content-Type', "");
 
     if (empty($content_type)) {
       throw new BadRequestHttpException("Missing Content-Type header");
-    }
-
-    $content_length = $request->headers->get('Content-Length', 0);
-
-    if ($content_length <= 0) {
-      throw new BadRequestHttpException("Missing Content-Length");
     }
 
     $content_disposition = $request->headers->get('Content-Disposition', "");
@@ -179,23 +155,28 @@ class MediaSourceController extends ControllerBase {
     }
     $filename = $matches[1];
 
-    // Since we create both a Media and its File, AND update a node,
+    // Since we create both a Media and its File,
     // start a transaction.
     $transaction = $this->database->startTransaction();
 
     try {
-      $media = $this->service->addToNode(
+      $media = $this->service->putToNode(
         $node,
-        $field,
-        $bundle,
+        $media_type,
+        $taxonomy_term,
         $request->getContent(TRUE),
         $content_type,
-        $content_length,
         $filename
       );
 
-      $response = new Response("", 201);
-      $response->headers->set("Location", $media->url('canonical', ['absolute' => TRUE]));
+      // We return the media if it was newly created.
+      if ($media) {
+        $response = new Response("", 201);
+        $response->headers->set("Location", $media->url('canonical', ['absolute' => TRUE]));
+      }
+      else {
+        $response = new Response("", 204);
+      }
       return $response;
     }
     catch (HttpException $e) {
@@ -219,7 +200,7 @@ class MediaSourceController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   Access result.
    */
-  public function addToNodeAccess(AccountInterface $account, RouteMatch $route_match) {
+  public function putToNodeAccess(AccountInterface $account, RouteMatch $route_match) {
     // We'd have 404'd already if node didn't exist, so no need to check.
     // Just hack it out of the route match.
     $node = $route_match->getParameter('node');

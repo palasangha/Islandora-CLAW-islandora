@@ -1,11 +1,6 @@
 # Islandora Services
 # islandora.services.yml:
 services:
-  islandora.paramconverter.entity:
-    class: Drupal\islandora\ParamConverter\UuidEntityConverter
-    tags:
-      - { name: paramconverter }
-    arguments: ['@entity.manager']
   islandora.eventgenerator:
     class: Drupal\islandora\EventGenerator\EventGenerator
   islandora.stomp:
@@ -20,17 +15,18 @@ services:
       - { name: event_subscriber }
   islandora.media_link_header_subscriber:
     class: Drupal\islandora\EventSubscriber\MediaLinkHeaderSubscriber
-    arguments: ['@entity_type.manager', '@entity_field.manager', '@current_route_match', '@access_manager', '@current_user']
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@access_manager', '@current_user', '@current_route_match', '@request_stack']
     tags:
       - { name: event_subscriber }
   islandora.node_link_header_subscriber:
     class: Drupal\islandora\EventSubscriber\NodeLinkHeaderSubscriber
-    arguments: ['@entity_type.manager', '@entity_field.manager', '@current_route_match', '@access_manager', '@current_user']
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@access_manager', '@current_user', '@current_route_match', '@request_stack', '@islandora.utils']
     tags:
       - { name: event_subscriber }
-  islandora.versioncounter:
-    class: Drupal\islandora\VersionCounter\VersionCounter
-    arguments: ['@database']
+  islandora.admin_view_route_subscriber:
+    class: Drupal\islandora\EventSubscriber\AdminViewsRouteSubscriber
+    tags:
+      - { name: event_subscriber }
   logger.channel.islandora:
       parent: logger.channel_base
       arguments: ['islandora']
@@ -44,6 +40,14 @@ services:
     arguments: ['@current_route_match']
     tags:
       - { name: 'context_provider' }
+  islandora.taxonomy_term_route_context_provider:
+    class: Drupal\islandora\ContextProvider\TermRouteContextProvider
+    arguments: ['@current_route_match']
+    tags:
+      - { name: 'context_provider' }
   islandora.media_source_service:
     class: Drupal\islandora\MediaSource\MediaSourceService
-    arguments: ['@entity_type.manager', '@current_user', '@stream_wrapper_manager', '@token']
+    arguments: ['@entity_type.manager', '@current_user', '@stream_wrapper_manager', '@language_manager', '@token', '@entity.query']
+  islandora.utils:
+    class: Drupal\islandora\IslandoraUtils
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@entity.query', '@context.manager', '@stream_wrapper_manager']

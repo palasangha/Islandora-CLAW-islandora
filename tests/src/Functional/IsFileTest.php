@@ -37,9 +37,14 @@ class IsFileTest extends IslandoraFunctionalTestBase {
     $this->addCondition('test', 'is_file');
     $this->addPresetReaction('test', 'index', 'hello_world');
 
-    // Add a new Thumbnail media and confirm Hello World! is printed to the
+    // Add a new media and confirm Hello World! is printed to the
     // screen for the file upload.
-    $this->createThumbnailWithFile();
+    $file = current($this->getTestFiles('file'));
+    $values = [
+      'name[0][value]' => 'Test Media',
+      'files[field_media_file_0]' => __DIR__ . '/../../fixtures/test_file.txt',
+    ];
+    $this->drupalPostForm('media/add/' . $this->testMediaType->id(), $values, t('Save'));
     $this->assertSession()->pageTextContains("Hello World!");
 
     // Stash the media's url.
@@ -49,7 +54,7 @@ class IsFileTest extends IslandoraFunctionalTestBase {
     $values = [
       'name[0][value]' => 'Test Media Changed',
     ];
-    $this->postEntityEditForm($url, $values, 'Save and keep published');
+    $this->postEntityEditForm($url, $values, 'Save');
 
     // Confirm Hello World! is not printed to the screen.
     $this->assertSession()->pageTextNotContains("Hello World!");
