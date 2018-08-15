@@ -10,6 +10,7 @@ dependencies:
   - features
   - field
   - file
+  - filehash
   - image
   - islandora
   - jsonld
