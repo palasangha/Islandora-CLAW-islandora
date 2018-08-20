@@ -107,10 +107,13 @@ class IslandoraUtils {
     if ($field->isEmpty()) {
       return NULL;
     }
-    return $field->first()
+    $parent = $field->first()
       ->get('entity')
-      ->getTarget()
-      ->getValue();
+      ->getTarget();
+    if (!is_null($parent)) {
+      return $parent->getValue();
+    }
+    return NULL;
   }
 
   /**
