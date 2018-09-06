@@ -186,6 +186,60 @@ class FedoraAdapterTest extends IslandoraKernelTestBase {
   }
 
   /**
+   * Mocks up an adapter for Delete requests with a tombstone.
+   */
+  protected function createAdapterForDeleteWithTombstone() {
+    $fedora_prophecy = $this->prophesize(IFedoraApi::class);
+
+    $prophecy = $this->prophesize(Response::class);
+    $prophecy->getStatusCode()->willReturn(204);
+
+    $head_prophecy = $this->prophesize(Response::class);
+    $head_prophecy->getStatusCode()->willReturn(410);
+    $head_prophecy->getHeader('Link')->willReturn('<some-path-to-a-tombstone>; rel="hasTombstone"');
+
+    $tombstone_prophecy = $this->prophesize(Response::class);
+    $tombstone_prophecy->getStatusCode()->willReturn(204);
+
+    $fedora_prophecy->deleteResource('')->willReturn($prophecy->reveal());
+    $fedora_prophecy->getResourceHeaders('')->willReturn($head_prophecy->reveal());
+    $fedora_prophecy->deleteResource('some-path-to-a-tombstone')->willReturn($tombstone_prophecy->reveal());
+
+    $api = $fedora_prophecy->reveal();
+
+    $mime_guesser = $this->prophesize(MimeTypeGuesserInterface::class)->reveal();
+
+    return new FedoraAdapter($api, $mime_guesser);
+  }
+
+  /**
+   * Mocks up an adapter for Delete requests with a tombstone which fail.
+   */
+  protected function createAdapterForDeleteWithTombstoneFail() {
+    $fedora_prophecy = $this->prophesize(IFedoraApi::class);
+
+    $prophecy = $this->prophesize(Response::class);
+    $prophecy->getStatusCode()->willReturn(204);
+
+    $head_prophecy = $this->prophesize(Response::class);
+    $head_prophecy->getStatusCode()->willReturn(410);
+    $head_prophecy->getHeader('Link')->willReturn('<some-path-to-a-tombstone>; rel="hasTombstone"');
+
+    $tombstone_prophecy = $this->prophesize(Response::class);
+    $tombstone_prophecy->getStatusCode()->willReturn(500);
+
+    $fedora_prophecy->deleteResource('')->willReturn($prophecy->reveal());
+    $fedora_prophecy->getResourceHeaders('')->willReturn($head_prophecy->reveal());
+    $fedora_prophecy->deleteResource('some-path-to-a-tombstone')->willReturn($tombstone_prophecy->reveal());
+
+    $api = $fedora_prophecy->reveal();
+
+    $mime_guesser = $this->prophesize(MimeTypeGuesserInterface::class)->reveal();
+
+    return new FedoraAdapter($api, $mime_guesser);
+  }
+
+  /**
    * Asserts the stucture/contents of a metadata response for a file.
    */
   protected function assertFileMetadata(array $metadata) {
@@ -457,6 +511,24 @@ class FedoraAdapterTest extends IslandoraKernelTestBase {
     $adapter = $this->createAdapterForDelete();
 
     $this->assertTrue($adapter->deleteDir('') == TRUE, "deleteDir() must return TRUE on 204 or 404");
+  }
+
+  /**
+   * @covers \Drupal\islandora\Flysystem\Adapter\FedoraAdapter::delete
+   */
+  public function testDeleteWithTombstone() {
+    $adapter = $this->createAdapterForDeleteWithTombstone();
+
+    $this->assertTrue($adapter->delete(''), 'delete() must return TRUE on 204 or 404 reponse after deleting the tombstone.');
+  }
+
+  /**
+   * @covers \Drupal\islandora\Flysystem\Adapter\FedoraAdapter::delete
+   */
+  public function testDeleteWithTombstoneFail() {
+    $adapter = $this->createAdapterForDeleteWithTombstoneFail();
+
+    $this->assertFalse($adapter->delete(''), 'delete() must return FALSE on non-(204 or 404) response after deleting the tombstone.');
   }
 
   /**

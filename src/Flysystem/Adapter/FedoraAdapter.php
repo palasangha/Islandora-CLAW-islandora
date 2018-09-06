@@ -283,8 +283,14 @@ class FedoraAdapter implements AdapterInterface {
    */
   public function delete($path) {
     $response = $this->fedora->deleteResource($path);
-
     $code = $response->getStatusCode();
+    if ($code == 204) {
+      // Deleted so check for a tombstone as well.
+      $tomb_code = $this->deleteTombstone($path);
+      if (!is_null($tomb_code)) {
+        return $tomb_code;
+      }
+    }
     return in_array($code, [204, 404]);
   }
 
@@ -319,6 +325,38 @@ class FedoraAdapter implements AdapterInterface {
     }
 
     return $this->getMetadata($dirname);
+  }
+
+  /**
+   * Delete a tombstone for a path if it exists.
+   *
+   * @param string $path
+   *   The original deleted resource path.
+   *
+   * @return bool|null
+   *   NULL if no tombstone, TRUE if tombstone deleted, FALSE otherwise.
+   */
+  private function deleteTombstone($path) {
+    $response = $this->fedora->getResourceHeaders($path);
+    $return = NULL;
+    if ($response->getStatusCode() == 410) {
+      $return = FALSE;
+      $link_headers = Psr7\parse_header($response->getHeader('Link'));
+      if ($link_headers) {
+        $tombstones = array_filter($link_headers, function ($o) {
+          return (isset($o['rel']) && $o['rel'] == 'hasTombstone');
+        });
+        foreach ($tombstones as $tombstone) {
+          // Trim <> from URL.
+          $url = rtrim(ltrim($tombstone[0], '<'), '>');
+          $response = $this->fedora->deleteResource($url);
+          if ($response->getStatusCode() == 204) {
+            $return = TRUE;
+          }
+        }
+      }
+    }
+    return $return;
   }
 
 }
