@@ -9,6 +9,7 @@ use Drupal\islandora\ContextReaction\NormalizerAlterReaction;
 use Drupal\islandora\MediaSource\MediaSourceService;
 use Drupal\jsonld\Normalizer\NormalizerBase;
 use Drupal\media\MediaInterface;
+use Drupal\islandora\IslandoraUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,13 +33,15 @@ class MappingUriPredicateReaction extends NormalizerAlterReaction {
                               $plugin_id,
                               $plugin_definition,
                               ConfigFactoryInterface $config_factory,
+                              IslandoraUtils $utils,
                               MediaSourceService $media_source) {
 
     parent::__construct(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $config_factory
+      $config_factory,
+      $utils
     );
     $this->mediaSource = $media_source;
   }
@@ -52,6 +55,7 @@ class MappingUriPredicateReaction extends NormalizerAlterReaction {
       $plugin_id,
       $plugin_definition,
       $container->get('config.factory'),
+      $container->get('islandora.utils'),
       $container->get('islandora.media_source_service')
     );
   }
@@ -80,7 +84,7 @@ class MappingUriPredicateReaction extends NormalizerAlterReaction {
             // Swap media and file urls.
             if ($entity instanceof MediaInterface) {
               $file = $this->mediaSource->getSourceFile($entity);
-              $graph['@id'] = $file->url('canonical', ['absolute' => TRUE]);
+              $graph['@id'] = $this->utils->getDownloadUrl($file);
             }
             if (isset($graph[$drupal_predicate])) {
               if (!is_array($graph[$drupal_predicate])) {

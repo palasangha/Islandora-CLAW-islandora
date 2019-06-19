@@ -170,6 +170,10 @@ EOD;
       $destination->write($name, $source->read($name));
     }
 
+    $media_settings = $this->container->get('config.factory')->getEditable('media.settings');
+    $media_settings->set('standalone_url', TRUE);
+    $media_settings->save(TRUE);
+
     // Cache clear / rebuild.
     drupal_flush_all_caches();
     $this->container->get('router.builder')->rebuild();

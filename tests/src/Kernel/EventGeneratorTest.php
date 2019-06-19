@@ -65,7 +65,7 @@ class EventGeneratorTest extends IslandoraKernelTestBase {
 
     // Create the event generator so we can test it.
     $this->eventGenerator = new EventGenerator(
-      $this->container->get('language_manager'),
+      $this->container->get('islandora.utils'),
       $this->container->get('islandora.media_source_service')
     );
   }

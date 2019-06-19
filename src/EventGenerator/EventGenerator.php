@@ -3,8 +3,7 @@
 namespace Drupal\islandora\EventGenerator;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Url;
+use Drupal\islandora\IslandoraUtils;
 use Drupal\islandora\MediaSource\MediaSourceService;
 use Drupal\user\UserInterface;
 
@@ -16,11 +15,11 @@ use Drupal\user\UserInterface;
 class EventGenerator implements EventGeneratorInterface {
 
   /**
-   * Language manager.
+   * Islandora utils.
    *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
+   * @var \Drupal\islandora\IslandoraUtils
    */
-  protected $languageManager;
+  protected $utils;
 
   /**
    * Media source service.
@@ -32,13 +31,13 @@ class EventGenerator implements EventGeneratorInterface {
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   Language manager.
+   * @param \Drupal\islandora\IslandoraUtils $utils
+   *   Islandora utils.
    * @param \Drupal\islandora\MediaSource\MediaSourceService $media_source
    *   Media source service.
    */
-  public function __construct(LanguageManagerInterface $language_manager, MediaSourceService $media_source) {
-    $this->languageManager = $language_manager;
+  public function __construct(IslandoraUtils $utils, MediaSourceService $media_source) {
+    $this->utils = $utils;
     $this->mediaSource = $media_source;
   }
 
@@ -47,21 +46,16 @@ class EventGenerator implements EventGeneratorInterface {
    */
   public function generateEvent(EntityInterface $entity, UserInterface $user, array $data) {
 
-    $user_url = $user->toUrl()->setAbsolute()->toString();
+    $user_url = $this->utils->getEntityUrl($user);
+
     $entity_type = $entity->getEntityTypeId();
 
-    $undefined = $this->languageManager->getLanguage('und');
-
     if ($entity_type == 'file') {
-      $entity_url = $entity->url('canonical', ['absolute' => TRUE, 'language' => $undefined]);
+      $entity_url = $this->utils->getDownloadUrl($entity);
       $mimetype = $entity->getMimeType();
     }
     else {
-      $entity_url = Url::fromRoute(
-        "rest.entity.$entity_type.GET",
-        [$entity_type => $entity->id()],
-        ['absolute' => TRUE, 'language' => $undefined]
-      )->toString();
+      $entity_url = $this->utils->getEntityUrl($entity);
       $mimetype = 'text/html';
     }
 
@@ -110,14 +104,14 @@ class EventGenerator implements EventGeneratorInterface {
       $event['object']['url'][] = [
         "name" => "JSON",
         "type" => "Link",
-        "href" => "$entity_url?_format=json",
+        "href" => $this->utils->getRestUrl($entity, 'json'),
         "mediaType" => "application/json",
         "rel" => "alternate",
       ];
       $event['object']['url'][] = [
         "name" => "JSONLD",
         "type" => "Link",
-        "href" => "$entity_url?_format=jsonld",
+        "href" => $this->utils->getRestUrl($entity, 'jsonld'),
         "mediaType" => "application/ld+json",
         "rel" => "alternate",
       ];
@@ -130,7 +124,7 @@ class EventGenerator implements EventGeneratorInterface {
         $event['object']['url'][] = [
           "name" => "Describes",
           "type" => "Link",
-          "href" => $file->url('canonical', ['absolute' => TRUE, 'language' => $undefined]),
+          "href" => $this->utils->getDownloadUrl($file),
           "mediaType" => $file->getMimeType(),
           "rel" => "describes",
         ];
