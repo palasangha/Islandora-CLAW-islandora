@@ -18,6 +18,11 @@ use Psr\Log\LoggerInterface;
  */
 class GeminiClientFactoryTest extends IslandoraKernelTestBase {
 
+  /**
+   * Logger.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
   private $logger;
 
   /**

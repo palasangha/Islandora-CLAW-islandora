@@ -20,8 +20,14 @@ class IslandoraFunctionalTestBase extends BrowserTestBase {
   use TestFileCreationTrait;
   use MediaTypeCreationTrait;
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['context_ui', 'field_ui', 'islandora'];
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $configSchemaCheckerExclusions = [
     'jwt.config',
     'context.context.test',
@@ -31,10 +37,25 @@ class IslandoraFunctionalTestBase extends BrowserTestBase {
     'key.key.test',
   ];
 
+  /**
+   * Test node type.
+   *
+   * @var \Drupal\node\Entity\NodeType
+   */
   protected $testType;
 
+  /**
+   * Test media type.
+   *
+   * @var \Drupal\media\Entity\MediaType
+   */
   protected $testMediaType;
 
+  /**
+   * Test vocabulary.
+   *
+   * @var \Drupal\taxonomy\Entity\Vocabulary
+   */
   protected $testVocabulary;
 
   /**

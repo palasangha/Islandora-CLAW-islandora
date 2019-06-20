@@ -7,6 +7,9 @@ namespace Drupal\Tests\islandora\Functional;
  */
 abstract class GenerateDerivativeTestBase extends IslandoraFunctionalTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['context_ui'];
 
   /**

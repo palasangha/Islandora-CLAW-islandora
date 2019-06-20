@@ -24,6 +24,11 @@ class MappingUriPredicateReaction extends NormalizerAlterReaction {
 
   const URI_PREDICATE = 'drupal_uri_predicate';
 
+  /**
+   * Media source service.
+   *
+   * @var \Drupal\islandora\MediaSource\MediaSourceService
+   */
   protected $mediaSource;
 
   /**
