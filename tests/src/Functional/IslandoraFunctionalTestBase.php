@@ -35,6 +35,7 @@ class IslandoraFunctionalTestBase extends BrowserTestBase {
     'context.context.media',
     'context.context.file',
     'key.key.test',
+    'media.settings',
   ];
 
   /**
