@@ -11,6 +11,9 @@ use Drupal\Tests\islandora\Functional\GenerateDerivativeTestBase;
  */
 class GenerateImageDerivativeTest extends GenerateDerivativeTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['context_ui', 'islandora_image'];
 
   /**

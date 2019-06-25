@@ -20,8 +20,14 @@ class IslandoraFunctionalTestBase extends BrowserTestBase {
   use TestFileCreationTrait;
   use MediaTypeCreationTrait;
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['context_ui', 'field_ui', 'islandora'];
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $configSchemaCheckerExclusions = [
     'jwt.config',
     'context.context.test',
@@ -29,12 +35,28 @@ class IslandoraFunctionalTestBase extends BrowserTestBase {
     'context.context.media',
     'context.context.file',
     'key.key.test',
+    'media.settings',
   ];
 
+  /**
+   * Test node type.
+   *
+   * @var \Drupal\node\Entity\NodeType
+   */
   protected $testType;
 
+  /**
+   * Test media type.
+   *
+   * @var \Drupal\media\Entity\MediaType
+   */
   protected $testMediaType;
 
+  /**
+   * Test vocabulary.
+   *
+   * @var \Drupal\taxonomy\Entity\Vocabulary
+   */
   protected $testVocabulary;
 
   /**
@@ -169,6 +191,10 @@ EOD;
     foreach ($source->listAll() as $name) {
       $destination->write($name, $source->read($name));
     }
+
+    $media_settings = $this->container->get('config.factory')->getEditable('media.settings');
+    $media_settings->set('standalone_url', TRUE);
+    $media_settings->save(TRUE);
 
     // Cache clear / rebuild.
     drupal_flush_all_caches();

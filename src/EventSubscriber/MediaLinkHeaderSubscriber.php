@@ -77,10 +77,9 @@ class MediaLinkHeaderSubscriber extends LinkHeaderSubscriber implements EventSub
     }
 
     // Collect file links for the media.
-    $undefined = $this->languageManager->getLanguage('und');
     foreach ($media->get($source_field)->referencedEntities() as $referencedEntity) {
       if ($referencedEntity->access('view')) {
-        $file_url = $referencedEntity->url('canonical', ['absolute' => TRUE, 'language' => $undefined]);
+        $file_url = $this->utils->getDownloadUrl($referencedEntity);
         $links[] = "<$file_url>; rel=\"describes\"; type=\"{$referencedEntity->getMimeType()}\"";
       }
     }

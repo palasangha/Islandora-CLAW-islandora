@@ -27,8 +27,18 @@ class Fedora implements FlysystemPluginInterface, ContainerFactoryPluginInterfac
 
   use FlysystemUrlTrait;
 
+  /**
+   * Fedora client.
+   *
+   * @var \Islandora\Chullo\IFedoraApi
+   */
   protected $fedora;
 
+  /**
+   * Mimetype guesser.
+   *
+   * @var \Symfony\Component\HttpFoundation\File\Mimetype\MimeTypeGuesserInterface
+   */
   protected $mimeTypeGuesser;
 
   /**

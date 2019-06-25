@@ -11,6 +11,9 @@ use Drupal\Tests\islandora\Functional\GenerateDerivativeTestBase;
  */
 class GenerateAudioDerivativeTest extends GenerateDerivativeTestBase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected static $modules = ['context_ui', 'islandora_audio'];
 
   /**

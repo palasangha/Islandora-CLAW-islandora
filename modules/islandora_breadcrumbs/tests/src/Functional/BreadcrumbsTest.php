@@ -24,12 +24,32 @@ class BreadcrumbsTest extends IslandoraFunctionalTestBase {
   ];
 
 
+  /**
+   * A node.
+   *
+   * @var \Drupal\node\NodeInterface
+   */
   protected $nodeA;
 
+  /**
+   * Another node.
+   *
+   * @var \Drupal\node\NodeInterface
+   */
   protected $nodeB;
 
+  /**
+   * Yet another node.
+   *
+   * @var \Drupal\node\NodeInterface
+   */
   protected $nodeC;
 
+  /**
+   * Another one.
+   *
+   * @var \Drupal\node\NodeInterface
+   */
   protected $nodeD;
 
   /**

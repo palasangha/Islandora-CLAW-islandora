@@ -23,18 +23,53 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class GeminiLookupTest extends IslandoraKernelTestBase {
 
+  /**
+   * JWT Auth.
+   *
+   * @var \Drupal\jwt\Authentication\Provider\JwtAuth
+   */
   private $jwtAuth;
 
+  /**
+   * Logger.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
   private $logger;
 
+  /**
+   * Guzzle.
+   *
+   * @var \GuzzleHttp\Client
+   */
   private $guzzle;
 
+  /**
+   * Gemini client.
+   *
+   * @var \Islandora\Crayfish\Commons\Client\GeminiClient
+   */
   private $geminiClient;
 
+  /**
+   * Media source service.
+   *
+   * @var \Drupal\islandora\MediaSource\MediaSourceService
+   */
   private $mediaSource;
 
+  /**
+   * An entity.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface
+   */
   private $entity;
 
+  /**
+   * A media.
+   *
+   * @var \Drupal\media\MediaInterface
+   */
   private $media;
 
   /**

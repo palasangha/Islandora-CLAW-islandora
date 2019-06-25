@@ -155,7 +155,7 @@ class AbstractGenerateDerivative extends EmitEvent {
       throw new \RuntimeException("Could not locate source file for media {$source_media->id()}", 500);
     }
 
-    $data['source_uri'] = $source_file->url('canonical', ['absolute' => TRUE]);
+    $data['source_uri'] = $this->utils->getDownloadUrl($source_file);
 
     // Find the term for the derivative and use it to set the destination url
     // in the data array.

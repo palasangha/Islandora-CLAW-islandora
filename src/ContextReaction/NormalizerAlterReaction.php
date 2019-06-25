@@ -7,6 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\jsonld\Form\JsonLdSettingsForm;
+use Drupal\islandora\IslandoraUtils;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,15 +27,24 @@ abstract class NormalizerAlterReaction extends ContextReactionPluginBase impleme
   protected $jsonldConfig;
 
   /**
+   * Islandora utils.
+   *
+   * @var \Drupal\islandora\IslandoraUtils
+   */
+  protected $utils;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration,
                               $plugin_id,
                               $plugin_definition,
-                              ConfigFactoryInterface $config_factory) {
+                              ConfigFactoryInterface $config_factory,
+                              IslandoraUtils $utils) {
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->jsonldConfig = $config_factory->get(JsonLdSettingsForm::CONFIG_NAME);
+    $this->utils = $utils;
   }
 
   /**
@@ -45,7 +55,8 @@ abstract class NormalizerAlterReaction extends ContextReactionPluginBase impleme
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('islandora.utils')
     );
   }
 
@@ -71,11 +82,11 @@ abstract class NormalizerAlterReaction extends ContextReactionPluginBase impleme
    *   The url.
    */
   protected function getSubjectUrl(EntityInterface $entity) {
-    $url = $entity->toUrl('canonical', ['absolute' => TRUE]);
+    $format = '';
     if (!$this->jsonldConfig->get(JsonLdSettingsForm::REMOVE_JSONLD_FORMAT)) {
-      $url->setRouteParameter('_format', 'jsonld');
+      $format = 'jsonld';
     }
-    return $url->toString();
+    return $this->utils->getRestUrl($entity, $format);
   }
 
 }
