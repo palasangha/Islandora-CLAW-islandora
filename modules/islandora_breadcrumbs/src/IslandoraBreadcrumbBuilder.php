@@ -3,6 +3,7 @@
 namespace Drupal\islandora_breadcrumbs;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
@@ -21,12 +22,22 @@ class IslandoraBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   protected $config;
 
   /**
+   * Storage to load nodes.
+   *
+   * @var \Drupal\Core\Entity\EntityStorageInterface
+   */
+  protected $nodeStorage;
+
+  /**
    * Constructs a breadcrumb builder.
    *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
+   *   Storage to load nodes.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(EntityTypeManagerInterface $entity_manager, ConfigFactoryInterface $config_factory) {
+    $this->nodeStorage = $entity_manager->getStorage('node');
     $this->config = $config_factory->get('islandora.breadcrumbs');
   }
 
@@ -34,10 +45,13 @@ class IslandoraBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    * {@inheritdoc}
    */
   public function applies(RouteMatchInterface $attributes) {
-    $parameters = $attributes->getParameters()->all();
-    if (!empty($parameters['node'])) {
-      return ($parameters['node']->hasField($this->config->get('referenceField')) &&
-              !$parameters['node']->get($this->config->get('referenceField'))->isEmpty());
+    // Using getRawParameters for consistency (always gives a
+    // node ID string) because getParameters sometimes returns
+    // a node ID string and sometimes returns a node object.
+    $nid = $attributes->getRawParameters()->get('node');
+    if (!empty($nid)) {
+      $node = $this->nodeStorage->load($nid);
+      return (!empty($node) && $node->hasField($this->config->get('referenceField')) && !$node->get($this->config->get('referenceField'))->isEmpty());
     }
   }
 
@@ -46,7 +60,8 @@ class IslandoraBreadcrumbBuilder implements BreadcrumbBuilderInterface {
    */
   public function build(RouteMatchInterface $route_match) {
 
-    $node = $route_match->getParameter('node');
+    $nid = $route_match->getRawParameters()->get('node');
+    $node = $this->nodeStorage->load($nid);
     $breadcrumb = new Breadcrumb();
 
     $chain = [];
