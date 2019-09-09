@@ -20,6 +20,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\islandora\Form\IslandoraSettingsForm;
 use Drupal\islandora\GeminiLookup;
+use Drupal\islandora\IslandoraUtils;
 use Drupal\node\NodeInterface;
 use Drupal\media\MediaInterface;
 use Drupal\file\FileInterface;
@@ -155,6 +156,43 @@ function islandora_media_update(MediaInterface $media) {
       $media
     );
   }
+}
+
+/**
+ * Implements hook_media_presave().
+ */
+function islandora_media_presave(MediaInterface $media) {
+  $condition_manager = \Drupal::service('plugin.manager.condition');
+  $media_source_service = \Drupal::service('islandora.media_source_service');
+
+  // Check if the term is tagged as Extracted Text.
+  $condition = $condition_manager->createInstance('media_has_term', ['uri' => 'http://pcdm.org/use#ExtractedText']);
+  $condition->setContextValue('media', $media);
+  if (!$condition->evaluate()) {
+    return;
+  }
+  dsm("HAS EXTRACTED TEXT TERM");
+
+  // Check if the field to update exists.
+  if (!$media->hasField(IslandoraUtils::EXTRACTED_TEXT_FIELD)) {
+    return;
+  }
+  dsm("HAS EXTRACTED TEXT FIELD");
+
+  // Get the file.
+  $file = $media_source_service->getSourceFile($media);
+  if (!$file) {
+    return;
+  }
+
+  dsm(file_get_contents($file->getFileUri()), "FILE CONTENTS");
+
+  // Update the field using the file data.
+  $media->set(
+    IslandoraUtils::EXTRACTED_TEXT_FIELD,
+    file_get_contents($file->getFileUri())
+  );
+  dsm("SUCCESS?");
 }
 
 /**
