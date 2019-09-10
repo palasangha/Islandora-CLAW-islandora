@@ -28,7 +28,6 @@ use Drupal\taxonomy\TermInterface;
  */
 class IslandoraUtils {
 
-  const EXTRACTED_TEXT_FIELD = 'field_extracted_text';
   const EXTERNAL_URI_FIELD = 'field_external_uri';
   const MEDIA_OF_FIELD = 'field_media_of';
   const MEDIA_USAGE_FIELD = 'field_media_use';

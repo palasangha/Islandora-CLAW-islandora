@@ -1,6 +1,6 @@
 name: 'Islandora Text Extraction'
 type: module
-description: 'Islandora 8 module to connect to the Hypercube microservice for text extraction.'
+description: 'Islandora 8 module to connect to Hypercube microservice, and to get text from PDF ingest'
 core: 8.x
 package: 'Islandora'
 dependencies:
